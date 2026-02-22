@@ -320,8 +320,8 @@ elif page == "💰 Finansal":
     st.title("Finansal Analiz")
     
     total_feed_cost = sum(inv['amount'] * st.session_state.data['settings']['feed_costs'].get(inv['type'], 2.0) for inv in st.session_state.data['feed_invoices'])
-    total_drug_cost = sum(drug['cost'] * 10 for drug in st.session_state.data['drug_inventory'].values())
-    total_cost = total_feed_cost + total_drug_cost + (st.session_state.data['settings']['labor_cost_per_day'] * m['day'])
+    total_drug_cost = sum(drug.get('cost', 0) * 10 for drug in st.session_state.data['drug_inventory'].values() if isinstance(drug, dict))
+    total_cost = total_feed_cost + total_drug_cost + (st.session_state.data['settings'].get('labor_cost_per_day', 500) * m['day'])
     
     c1, c2, c3 = st.columns(3)
     c1.metric("Yem Maliyeti", f"₺{total_feed_cost:,.0f}")
