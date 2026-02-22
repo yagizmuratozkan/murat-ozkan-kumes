@@ -1,0 +1,296 @@
+{
+  "1": {
+    "gun": 1,
+    "canlı_ağırlık": 57,
+    "su_tüketimi": 28,
+    "yem_tüketimi": 13,
+    "fcr": 0.23
+  },
+  "2": {
+    "gun": 2,
+    "canlı_ağırlık": 73,
+    "su_tüketimi": 32,
+    "yem_tüketimi": 17,
+    "fcr": 0.41
+  },
+  "3": {
+    "gun": 3,
+    "canlı_ağırlık": 91,
+    "su_tüketimi": 40,
+    "yem_tüketimi": 20,
+    "fcr": 0.54
+  },
+  "4": {
+    "gun": 4,
+    "canlı_ağırlık": 111,
+    "su_tüketimi": 48,
+    "yem_tüketimi": 23,
+    "fcr": 0.66
+  },
+  "5": {
+    "gun": 5,
+    "canlı_ağırlık": 134,
+    "su_tüketimi": 52,
+    "yem_tüketimi": 27,
+    "fcr": 0.74
+  },
+  "6": {
+    "gun": 6,
+    "canlı_ağırlık": 160,
+    "su_tüketimi": 58,
+    "yem_tüketimi": 31,
+    "fcr": 0.81
+  },
+  "7": {
+    "gun": 7,
+    "canlı_ağırlık": 189,
+    "su_tüketimi": 62,
+    "yem_tüketimi": 35,
+    "fcr": 0.87
+  },
+  "8": {
+    "gun": 8,
+    "canlı_ağırlık": 220,
+    "su_tüketimi": 76,
+    "yem_tüketimi": 39,
+    "fcr": 0.92
+  },
+  "9": {
+    "gun": 9,
+    "canlı_ağırlık": 256,
+    "su_tüketimi": 84,
+    "yem_tüketimi": 43,
+    "fcr": 0.97
+  },
+  "10": {
+    "gun": 10,
+    "canlı_ağırlık": 294,
+    "su_tüketimi": 94,
+    "yem_tüketimi": 48,
+    "fcr": 1.01
+  },
+  "11": {
+    "gun": 11,
+    "canlı_ağırlık": 336,
+    "su_tüketimi": 102,
+    "yem_tüketimi": 53,
+    "fcr": 1.04
+  },
+  "12": {
+    "gun": 12,
+    "canlı_ağırlık": 381,
+    "su_tüketimi": 114,
+    "yem_tüketimi": 58,
+    "fcr": 1.07
+  },
+  "13": {
+    "gun": 13,
+    "canlı_ağırlık": 429,
+    "su_tüketimi": 122,
+    "yem_tüketimi": 63,
+    "fcr": 1.1
+  },
+  "14": {
+    "gun": 14,
+    "canlı_ağırlık": 480,
+    "su_tüketimi": 132,
+    "yem_tüketimi": 69,
+    "fcr": 1.11
+  },
+  "15": {
+    "gun": 15,
+    "canlı_ağırlık": 535,
+    "su_tüketimi": 146,
+    "yem_tüketimi": 74,
+    "fcr": 1.14
+  },
+  "16": {
+    "gun": 16,
+    "canlı_ağırlık": 593,
+    "su_tüketimi": 156,
+    "yem_tüketimi": 80,
+    "fcr": 1.16
+  },
+  "17": {
+    "gun": 17,
+    "canlı_ağırlık": 665,
+    "su_tüketimi": 166,
+    "yem_tüketimi": 92,
+    "fcr": 1.19
+  },
+  "18": {
+    "gun": 18,
+    "canlı_ağırlık": 719,
+    "su_tüketimi": 178,
+    "yem_tüketimi": 92,
+    "fcr": 1.2
+  },
+  "19": {
+    "gun": 19,
+    "canlı_ağırlık": 786,
+    "su_tüketimi": 190,
+    "yem_tüketimi": 104,
+    "fcr": 1.23
+  },
+  "20": {
+    "gun": 20,
+    "canlı_ağırlık": 856,
+    "su_tüketimi": 202,
+    "yem_tüketimi": 104,
+    "fcr": 1.25
+  },
+  "21": {
+    "gun": 21,
+    "canlı_ağırlık": 928,
+    "su_tüketimi": 214,
+    "yem_tüketimi": 110,
+    "fcr": 1.27
+  },
+  "22": {
+    "gun": 22,
+    "canlı_ağırlık": 1004,
+    "su_tüketimi": 218,
+    "yem_tüketimi": 116,
+    "fcr": 1.29
+  },
+  "23": {
+    "gun": 23,
+    "canlı_ağırlık": 1087,
+    "su_tüketimi": 238,
+    "yem_tüketimi": 122,
+    "fcr": 1.31
+  },
+  "24": {
+    "gun": 24,
+    "canlı_ağırlık": 1162,
+    "su_tüketimi": 250,
+    "yem_tüketimi": 128,
+    "fcr": 1.33
+  },
+  "25": {
+    "gun": 25,
+    "canlı_ağırlık": 1244,
+    "su_tüketimi": 262,
+    "yem_tüketimi": 133,
+    "fcr": 1.35
+  },
+  "26": {
+    "gun": 26,
+    "canlı_ağırlık": 1328,
+    "su_tüketimi": 272,
+    "yem_tüketimi": 140,
+    "fcr": 1.37
+  },
+  "27": {
+    "gun": 27,
+    "canlı_ağırlık": 1414,
+    "su_tüketimi": 276,
+    "yem_tüketimi": 157,
+    "fcr": 1.39
+  },
+  "28": {
+    "gun": 28,
+    "canlı_ağırlık": 1501,
+    "su_tüketimi": 296,
+    "yem_tüketimi": 165,
+    "fcr": 1.41
+  },
+  "29": {
+    "gun": 29,
+    "canlı_ağırlık": 1590,
+    "su_tüketimi": 308,
+    "yem_tüketimi": 165,
+    "fcr": 1.43
+  },
+  "30": {
+    "gun": 30,
+    "canlı_ağırlık": 1680,
+    "su_tüketimi": 318,
+    "yem_tüketimi": 163,
+    "fcr": 1.45
+  },
+  "31": {
+    "gun": 31,
+    "canlı_ağırlık": 1771,
+    "su_tüketimi": 328,
+    "yem_tüketimi": 165,
+    "fcr": 1.47
+  },
+  "32": {
+    "gun": 32,
+    "canlı_ağırlık": 1863,
+    "su_tüketimi": 340,
+    "yem_tüketimi": 165,
+    "fcr": 1.49
+  },
+  "33": {
+    "gun": 33,
+    "canlı_ağırlık": 1956,
+    "su_tüketimi": 358,
+    "yem_tüketimi": 165,
+    "fcr": 1.51
+  },
+  "34": {
+    "gun": 34,
+    "canlı_ağırlık": 2050,
+    "su_tüketimi": 366,
+    "yem_tüketimi": 165,
+    "fcr": 1.53
+  },
+  "35": {
+    "gun": 35,
+    "canlı_ağırlık": 2144,
+    "su_tüketimi": 376,
+    "yem_tüketimi": 165,
+    "fcr": 1.55
+  },
+  "36": {
+    "gun": 36,
+    "canlı_ağırlık": 2239,
+    "su_tüketimi": 384,
+    "yem_tüketimi": 165,
+    "fcr": 1.57
+  },
+  "37": {
+    "gun": 37,
+    "canlı_ağırlık": 2334,
+    "su_tüketimi": 392,
+    "yem_tüketimi": 165,
+    "fcr": 1.59
+  },
+  "38": {
+    "gun": 38,
+    "canlı_ağırlık": 2429,
+    "su_tüketimi": 400,
+    "yem_tüketimi": 165,
+    "fcr": 1.61
+  },
+  "39": {
+    "gun": 39,
+    "canlı_ağırlık": 2524,
+    "su_tüketimi": 406,
+    "yem_tüketimi": 165,
+    "fcr": 1.63
+  },
+  "40": {
+    "gun": 40,
+    "canlı_ağırlık": 2620,
+    "su_tüketimi": 406,
+    "yem_tüketimi": 165,
+    "fcr": 1.65
+  },
+  "41": {
+    "gun": 41,
+    "canlı_ağırlık": 2715,
+    "su_tüketimi": 416,
+    "yem_tüketimi": 165,
+    "fcr": 1.67
+  },
+  "42": {
+    "gun": 42,
+    "canlı_ağırlık": 2899,
+    "su_tüketimi": 430,
+    "yem_tüketimi": 165,
+    "fcr": 1.69
+  }
+}
