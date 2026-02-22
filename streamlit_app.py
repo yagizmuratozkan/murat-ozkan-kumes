@@ -329,7 +329,7 @@ def page_ai_bilgi_bankasi():
                         
                         # Analyze with Gemini
                         response = gemini_client.models.generate_content(
-                            model='gemini-2.0-flash-exp',
+                            model='gemini-1.5-flash',
                             contents=[
                                 types.Content(
                                     role="user",
@@ -422,7 +422,7 @@ def page_sohbet():
                 try:
                     # Get AI response
                     response = gemini_client.models.generate_content(
-                        model='gemini-2.0-flash-exp',
+                        model='gemini-1.5-flash',
                         contents=f"""Sen bir tavuk ciftligi yonetim asistanisin. 
                         Kullanici sorusu: {user_input}
                         
