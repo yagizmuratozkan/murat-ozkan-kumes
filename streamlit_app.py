@@ -72,6 +72,59 @@ def get_current_day():
     except:
         return 1
 
+
+def calculate_feed_days_remaining(banvit_data, house_data, current_day):
+    """Kalan yem gün sayısını hesapla"""
+    if current_day > 42 or current_day < 1:
+        return {}
+    
+    day_data = banvit_data.get(str(current_day), {})
+    daily_consumption_per_bird = day_data.get('yem_tüketimi', 150) / 1000  # gram to kg
+    
+    feed_days = {}
+    for house_name, house_info in house_data.items():
+        live_birds = house_info['live']
+        daily_need = live_birds * daily_consumption_per_bird
+        silo_remaining = house_info['silo']
+        days_remaining = silo_remaining / daily_need if daily_need > 0 else 999
+        feed_days[house_name] = {'days': days_remaining, 'daily_need': daily_need, 'silo': silo_remaining}
+    
+    return feed_days
+
+def calculate_feed_order(feed_days, current_day):
+    """Yem siparişi önerisi hesapla - 9 ton katları, haftaiçi"""
+    from datetime import datetime
+    
+    orders = {}
+    today = datetime.now()
+    day_of_week = today.weekday()  # 0=Monday, 4=Friday, 5=Saturday, 6=Sunday
+    
+    # Haftaiçi mi kontrol et (Pazartesi-Cuma)
+    is_weekday = day_of_week < 5
+    
+    for house_name, feed_info in feed_days.items():
+        days_left = feed_info['days']
+        daily_need = feed_info['daily_need']
+        
+        order_needed = False
+        order_amount = 0
+        
+        if days_left < 3:
+            order_needed = True
+            # 9 ton katları hesapla
+            tons_needed = (daily_need * 5) / 1000  # 5 gün için
+            order_amount = int((tons_needed // 9) + 1) * 9  # Yukarı yuvarlama
+        
+        orders[house_name] = {
+            'order_needed': order_needed,
+            'order_amount': order_amount,
+            'is_weekday': is_weekday,
+            'days_left': days_left,
+            'recommendation': f"{order_amount} ton" if order_needed else "Yem yeterli"
+        }
+    
+    return orders
+
 def calculate_metrics():
     d = st.session_state.data
     current_day = get_current_day()
@@ -209,38 +262,60 @@ elif page == "📝 Günlük Veriler":
 
 # ============ PAGE: YEM TAKIBI ============
 elif page == "🚚 Yem Takibi":
-    st.title("Yem Takibi ve Sipariş")
+    st.title("Yem Takibi ve Siparişi")
     
-    col1, col2 = st.columns([1, 2])
+    # Calculate current metrics
+    metrics = calculate_metrics()
+    current_day = get_current_day()
+    
+    # Calculate feed days remaining
+    feed_days = calculate_feed_days_remaining(st.session_state.banvit_data, metrics['house_data'], current_day)
+    
+    # Calculate feed orders
+    feed_orders = calculate_feed_order(feed_days, current_day)
+    
+    col1, col2 = st.columns(2)
     
     with col1:
         st.subheader("Yem İrsaliyesi")
-        with st.form("feed_form"):
-            f_date = st.date_input("Tarih")
-            f_type = st.selectbox("Tip", ["Civciv", "Büyütme", "Bitirme"])
-            f_amt = st.number_input("Miktar (kg)", min_value=0)
+        with st.form("feed_invoice_form"):
+            invoice_date = st.date_input("Tarih", datetime.now().date())
+            feed_type = st.selectbox("Yem Türü", ["Civciv", "Büyütme", "Kesim"])
+            amount_kg = st.number_input("Miktar (kg)", min_value=0, step=100)
+            supplier = st.text_input("Tedarikçi")
+            
             if st.form_submit_button("Ekle"):
-                st.session_state.data['feed_invoices'].append({"date": str(f_date), "type": f_type, "amount": f_amt})
-                log_transaction(st.session_state.data, "FEED_INVOICE", f"{f_amt}kg {f_type} yem eklendi")
-                save_json(st.session_state.data, DATA_FILE)
-                st.success("İrsaliye eklendi!")
-                st.rerun()
+                st.session_state.data['feed_invoices'].append({
+                    'date': str(invoice_date),
+                    'type': feed_type,
+                    'amount': amount_kg,
+                    'supplier': supplier
+                })
+                save_json(DATA_FILE, st.session_state.data)
+                st.success("Yem kaydedildi")
     
     with col2:
         st.subheader("Sipariş Uyarıları")
-        for h in st.session_state.data['settings']['houses']:
-            daily_need = 150 * m['house_data'][h]['live'] / 1000
-            kalan = m['house_data'][h]['silo']
-            gun_kalan = kalan / daily_need if daily_need > 0 else 10
-            
-            if gun_kalan < 1:
-                st.markdown(f"<div class='alert-red'><b>{h}:</b> {gun_kalan:.1f} gün yem! ACIL SİPARİŞ!</div>", unsafe_allow_html=True)
-            elif gun_kalan < 3:
-                st.markdown(f"<div class='alert-yellow'><b>{h}:</b> {gun_kalan:.1f} gün yem. Sipariş planla.</div>", unsafe_allow_html=True)
+        
+        for house_name, order_info in feed_orders.items():
+            if order_info['order_needed']:
+                st.error(f"🚨 {house_name}: {order_info['days_left']:.1f} gün yem kaldı - {order_info['recommendation']} SİPARİŞ LAZIM!")
+                if not order_info['is_weekday']:
+                    st.warning(f"⚠️ Bugün hafta sonu! Pazartesi sipariş verebilirsin.")
             else:
-                st.markdown(f"<div class='alert-green'><b>{h}:</b> {gun_kalan:.1f} gün yem mevcut.</div>", unsafe_allow_html=True)
+                st.success(f"✅ {house_name}: {order_info['recommendation']} ({order_info['days_left']:.1f} gün)")
+    
+    st.divider()
+    
+    # Feed history
+    st.subheader("Yem Geliş Geçmişi")
+    if st.session_state.data['feed_invoices']:
+        for inv in st.session_state.data['feed_invoices']:
+            st.write(f"{inv['date']} - {inv['type']}: {inv['amount']} kg ({inv['supplier']})")
+    else:
+        st.info("Henüz yem kaydı yok")
 
-# ============ PAGE: HESAPLAMALAR ============
+
 elif page == "🧮 Hesaplamalar":
     st.title("Detaylı Analiz")
     tabs = st.tabs(["FCR Analizi", "Su Hazırlama", "Projeksiyon"])
