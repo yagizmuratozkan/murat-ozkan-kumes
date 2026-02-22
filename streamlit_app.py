@@ -66,7 +66,7 @@ def page_dashboard():
     st.markdown("---")
     
     # KPI Kartları
-    st.subheading("KPI Kartlari")
+    st.header("KPI Kartlari")
     
     toplam_hayvan = sum(ayarlar['kumes_civciv'][:4])
     toplam_olum = 0
@@ -94,7 +94,7 @@ def page_dashboard():
     st.markdown("---")
     
     # Kümes Özeti
-    st.subheading("Kumes Ozeti")
+    st.header("Kumes Ozeti")
     
     kumes_data = []
     for i in range(4):
@@ -114,7 +114,7 @@ def page_dashboard():
     st.markdown("---")
     
     # Performans Grafikleri
-    st.subheading("Performans Grafikleri")
+    st.header("Performans Grafikleri")
     
     col1, col2 = st.columns(2)
     
@@ -148,14 +148,14 @@ def page_ayarlar():
     
     ayarlar = st.session_state.ayarlar
     
-    st.subheading("Ciftlik Bilgileri")
+    st.header("Ciftlik Bilgileri")
     
     ciftlik_adi = st.text_input("Ciftlik Adi", value=ayarlar['ciftlik_adi'])
     baslangic_tarihi = st.date_input("Baslangic Tarihi", value=ayarlar['baslangic_tarihi'])
     
     st.markdown("---")
     
-    st.subheading("Kumes Kapasiteleri (Civciv Sayisi)")
+    st.header("Kumes Kapasiteleri (Civciv Sayisi)")
     
     col1, col2, col3, col4 = st.columns(4)
     
@@ -175,7 +175,7 @@ def page_ayarlar():
     
     st.markdown("---")
     
-    st.subheading("Silo Kapasiteleri (Ton)")
+    st.header("Silo Kapasiteleri (Ton)")
     
     col1, col2, col3, col4 = st.columns(4)
     
@@ -211,7 +211,7 @@ def page_gunluk_veriler():
     
     gun = st.slider("Gun Sec", 1, 42, 1)
     
-    st.subheading(f"Gun {gun} - Veri Girisi")
+    st.header(f"Gun {gun} - Veri Girisi")
     
     # Ölüm Verileri
     st.write("**Olum Sayilari**")
@@ -266,10 +266,10 @@ def page_hesaplamalar():
     
     st.info("Otomatik hesaplamalar burada goruntulenecek")
     
-    st.subheading("FCR Hesaplama")
+    st.header("FCR Hesaplama")
     st.write("FCR = (Toplam Yem - Kalan Yem) / Toplam Canli Kutle")
     
-    st.subheading("Su Hazirlama")
+    st.header("Su Hazirlama")
     st.write("Gunluk su tuketimi hesaplari")
 
 # İlaç Programı Sayfası
@@ -280,7 +280,7 @@ def page_ilac_programi():
     
     gun = st.slider("Gun Sec", 1, 42, 1)
     
-    st.subheading(f"Gun {gun} - Ilac Uygulamasi")
+    st.header(f"Gun {gun} - Ilac Uygulamasi")
     
     st.write("**Sabah:**")
     st.write("- Ilac bilgisi burada goruntulenecek")
@@ -292,7 +292,7 @@ def page_ilac_programi():
 def page_ai_bilgi_bankasi():
     st.title("AI Bilgi Bankasi")
     
-    st.subheading("Fotograf Yukleme")
+    st.header("Fotograf Yukleme")
     
     uploaded_file = st.file_uploader("Otopsi, FAL veya Antibiyogram fotografini yukleyin", type=['jpg', 'jpeg', 'png'])
     
@@ -313,12 +313,12 @@ def page_ilac_envanteri():
 def page_durum_analizi():
     st.title("Durum Analizi")
     
-    st.subheading("AI Raporu")
+    st.header("AI Raporu")
     
     st.metric("Saglik Puani", "85/100")
     st.write("Suru saglik durumu iyi. Devam edin.")
     
-    st.subheading("Kritik Gorevler")
+    st.header("Kritik Gorevler")
     st.write("1. Gun 10'da Hepato uygula")
     st.write("2. Yem siparisi ver (3 gun kaldi)")
     st.write("3. Veteriner kontrolu yap")
