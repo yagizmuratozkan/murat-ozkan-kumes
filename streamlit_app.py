@@ -1058,22 +1058,41 @@ def page_drug_program():
     
     st.info(f"📅 Bugün: Gün {current_day}/42")
     
+    # Load complete drug program from Excel-based JSON
+    complete_program = load_json('complete_drug_program.json')
+    
     # Drug program data structure
     if 'drug_program' not in st.session_state.farm_data:
         st.session_state.farm_data['drug_program'] = {}
     
     drug_program = st.session_state.farm_data['drug_program']
     
-    # Initialize all 42 days if not exists
-    for day in range(1, 43):
-        day_str = str(day)
-        if day_str not in drug_program:
-            drug_program[day_str] = {
-                "sabah": "",
-                "aksam": "",
-                "dozaj_notu": "",
-                "veteriner_notu": ""
-            }
+    # Initialize all 42 days with complete program data if not exists
+    if complete_program and 'drug_program_complete' in complete_program:
+        for day in range(1, 43):
+            day_str = str(day)
+            if day_str not in drug_program:
+                program_day = complete_program['drug_program_complete'].get(day_str, {})
+                drug_program[day_str] = {
+                    "sabah": program_day.get('morning', {}).get('drug', ''),
+                    "aksam": program_day.get('evening', {}).get('drug', ''),
+                    "dozaj_notu": program_day.get('morning', {}).get('dosage_note', ''),
+                    "veteriner_notu": program_day.get('clinical_note', ''),
+                    "strategic_focus": program_day.get('strategic_focus', ''),
+                    "age": program_day.get('age', ''),
+                    "date": program_day.get('date', '')
+                }
+    else:
+        # Fallback: Initialize basic structure
+        for day in range(1, 43):
+            day_str = str(day)
+            if day_str not in drug_program:
+                drug_program[day_str] = {
+                    "sabah": "",
+                    "aksam": "",
+                    "dozaj_notu": "",
+                    "veteriner_notu": ""
+                }
     
     with st.form("drug_program_form"):
         st.subheader(f"Gün {current_day} - İlaç Takvimi")

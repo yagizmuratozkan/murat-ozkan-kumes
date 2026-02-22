@@ -1,0 +1,832 @@
+{
+  "drug_program_complete": {
+    "1": {
+      "day": 1,
+      "date": "2026-02-14",
+      "age": "1. gün",
+      "strategic_focus": "Başlangıç - Uyum Dönemi",
+      "morning": {
+        "drug": "",
+        "time": "08:00-14:00",
+        "dosage_note": "Sadece temiz su"
+      },
+      "evening": {
+        "drug": "",
+        "time": "16:00-22:00",
+        "dosage_note": "Sadece temiz su"
+      },
+      "clinical_note": "Civcivler yerleştirildi. Uyum dönemi. Hiçbir ilaç verilmez. Su tüketimini izleyin."
+    },
+    "2": {
+      "day": 2,
+      "date": "2026-02-15",
+      "age": "2. gün",
+      "strategic_focus": "Başlangıç - Uyum Dönemi",
+      "morning": {
+        "drug": "",
+        "time": "08:00-14:00",
+        "dosage_note": "Sadece temiz su"
+      },
+      "evening": {
+        "drug": "",
+        "time": "16:00-22:00",
+        "dosage_note": "Sadece temiz su"
+      },
+      "clinical_note": "Uyum devam. Yem ve su tüketimini kontrol edin. Altlık kalitesini kontrol edin."
+    },
+    "3": {
+      "day": 3,
+      "date": "2026-02-16",
+      "age": "3. gün",
+      "strategic_focus": "Başlangıç - Uyum Dönemi",
+      "morning": {
+        "drug": "",
+        "time": "08:00-14:00",
+        "dosage_note": "Sadece temiz su"
+      },
+      "evening": {
+        "drug": "",
+        "time": "16:00-22:00",
+        "dosage_note": "Sadece temiz su"
+      },
+      "clinical_note": "Uyum dönemi sona yaklaşıyor. Civcivler 45-50g civarında olmalı."
+    },
+    "4": {
+      "day": 4,
+      "date": "2026-02-17",
+      "age": "4. gün",
+      "strategic_focus": "Başlangıç - Uyum Dönemi",
+      "morning": {
+        "drug": "",
+        "time": "08:00-14:00",
+        "dosage_note": "Sadece temiz su"
+      },
+      "evening": {
+        "drug": "",
+        "time": "16:00-22:00",
+        "dosage_note": "Sadece temiz su"
+      },
+      "clinical_note": "Uyum dönemi tamamlanıyor. Yem tüketimi artıyor. Ölüm oranı normal sınırlar içinde olmalı."
+    },
+    "5": {
+      "day": 5,
+      "date": "2026-02-18",
+      "age": "5. gün",
+      "strategic_focus": "Başlangıç - Uyum Dönemi",
+      "morning": {
+        "drug": "",
+        "time": "08:00-14:00",
+        "dosage_note": "Sadece temiz su"
+      },
+      "evening": {
+        "drug": "",
+        "time": "16:00-22:00",
+        "dosage_note": "Sadece temiz su"
+      },
+      "clinical_note": "Uyum dönemi sona eriyor. Yarından itibaren tedavi başlayacak. Otopsi bulguları kontrol edin."
+    },
+    "6": {
+      "day": 6,
+      "date": "2026-02-19",
+      "age": "6. gün",
+      "strategic_focus": "ACİL TEDAVİ - 1. BLOK (Omfalitis/Septisemi)",
+      "morning": {
+        "drug": "Neomisin Sülfat",
+        "dosage": "100 mg/L su (10g/100L)",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (100/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Hepato (Karaciğer Koruyucu) + Elektrolit",
+        "dosage": "Hepato: üretici dozajı. Elektrolit: 0.5-1 g/L",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (1/1000) ÷ 6"
+      },
+      "clinical_note": "KRİTİK: Otopside Omfalitis/Septisemi teyit edildi. Antibiyogramda Neomisin +++ (en yüksek hassasiyet). Amoksisillin DİRENÇLİ. Karaciğer hasarı için Hepato zorunlu. Ağır vakalarda Gentamisin SC enjeksiyon (5 mg/kg) eklenebilir.",
+      "withdrawal_period": 0,
+      "critical": true
+    },
+    "7": {
+      "day": 7,
+      "date": "2026-02-20",
+      "age": "7. gün",
+      "strategic_focus": "ACİL TEDAVİ - 1. BLOK",
+      "morning": {
+        "drug": "Neomisin Sülfat",
+        "dosage": "100 mg/L su",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (100/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Hepato + Elektrolit",
+        "dosage": "Hepato: üretici dozajı. Elektrolit: 0.5-1 g/L",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (1/1000) ÷ 6"
+      },
+      "clinical_note": "Tedavinin 2. günü. Ölümlerde azalma beklenir. Neomisin bağırsakta lokal etki gösterir, E.Coli'yi doğrudan hedefler.",
+      "withdrawal_period": 0
+    },
+    "8": {
+      "day": 8,
+      "date": "2026-02-21",
+      "age": "8. gün",
+      "strategic_focus": "ACİL TEDAVİ - 1. BLOK",
+      "morning": {
+        "drug": "Neomisin Sülfat",
+        "dosage": "100 mg/L su",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (100/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Hepato + Elektrolit",
+        "dosage": "Hepato: üretici dozajı. Elektrolit: 0.5-1 g/L",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (1/1000) ÷ 6"
+      },
+      "clinical_note": "Tedavinin 3. günü. Ölümler durmalı. Sarı kese iltihabı olan civcivleri ayıklamaya devam edin. Altlık kalitesini kontrol edin.",
+      "withdrawal_period": 0
+    },
+    "9": {
+      "day": 9,
+      "date": "2026-02-22",
+      "age": "9. gün",
+      "strategic_focus": "ACİL TEDAVİ - 1. BLOK (SON)",
+      "morning": {
+        "drug": "Neomisin Sülfat",
+        "dosage": "100 mg/L su",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (100/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Hepato + Vitamin C",
+        "dosage": "Hepato: üretici dozajı. Vit C: 500 mg/L su",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (500/1000) ÷ 6"
+      },
+      "clinical_note": "Tedavinin 4. ve son günü. Neomisin kalıntı süresi çok kısa (0-1 gün). Vitamin C ile bağışıklık desteği başlatılır. Ölümler tamamen durmuş olmalı.",
+      "withdrawal_period": 0
+    },
+    "10": {
+      "day": 10,
+      "date": "2026-02-23",
+      "age": "10. gün",
+      "strategic_focus": "FLORA ONARIMI VE TOPARLANMA",
+      "morning": {
+        "drug": "Probiyotik (Bacillus subtilis bazlı)",
+        "dosage": "0.5-1 g/L su",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Multivitamin (AD3E + B-Kompleks)",
+        "dosage": "Üretici dozajı",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Üretici dozajına göre"
+      },
+      "clinical_note": "Antibiyotik kürü bağırsak florasını tahrip etti. Probiyotik ile faydalı bakterileri yeniden yerleştiriyoruz (Rekabetçi Dışlama). Multivitamin ile bağışıklık onarımı.",
+      "withdrawal_period": 0
+    },
+    "11": {
+      "day": 11,
+      "date": "2026-02-24",
+      "age": "11. gün",
+      "strategic_focus": "FLORA ONARIMI VE TOPARLANMA",
+      "morning": {
+        "drug": "Probiyotik (Bacillus subtilis bazlı)",
+        "dosage": "0.5-1 g/L su",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Amino Asit + Elektrolit",
+        "dosage": "Amino asit: 0.5-1 mL/L su. Elektrolit: 0.5-1 g/L",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "clinical_note": "Flora onarımının 2. günü. Amino asitler (özellikle Metiyonin, Lizin) ile kas gelişimi desteklenir. Genç anaçtan gelen düşük ağırlıklı civcivlerin telafi büyümesi başlar.",
+      "withdrawal_period": 0
+    },
+    "12": {
+      "day": 12,
+      "date": "2026-02-25",
+      "age": "12. gün",
+      "strategic_focus": "FLORA ONARIMI VE TOPARLANMA",
+      "morning": {
+        "drug": "Probiyotik (Bacillus subtilis bazlı)",
+        "dosage": "0.5-1 g/L su",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Amino Asit + Multivitamin",
+        "dosage": "Amino asit: 0.5-1 mL/L su. Multivitamin: üretici dozajı",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "clinical_note": "Flora onarımının son günü. Bağırsak villus yapısı toparlanmaya başlar. Yem dönüşümü (FCR) iyileşmeye başlayacak.",
+      "withdrawal_period": 0
+    },
+    "13": {
+      "day": 13,
+      "date": "2026-02-26",
+      "age": "13. gün",
+      "strategic_focus": "PERFORMANS FAZI - BUTİRAT BAŞLANGIÇ",
+      "morning": {
+        "drug": "Sodyum Butirat",
+        "dosage": "0.5-1 g/L su",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Betain + Elektrolit",
+        "dosage": "Betain: 0.5-1 g/L su. Elektrolit: 0.5-1 g/L",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "clinical_note": "KRİTİK DÖNÜM NOKTASI: Butirat bağırsak villus büyümesini %15-20 artırır, besin emilimini maksimize eder. Betain ozmotik stres regülatörü olarak hücre hidratasyonunu korur. FCR -%3-8 iyileşme beklenir.",
+      "withdrawal_period": 0
+    },
+    "14": {
+      "day": 14,
+      "date": "2026-02-27",
+      "age": "14. gün",
+      "strategic_focus": "PERFORMANS FAZI - BUTİRAT + BETAİN",
+      "morning": {
+        "drug": "Sodyum Butirat",
+        "dosage": "0.5-1 g/L su",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Betain + Multivitamin",
+        "dosage": "Betain: 0.5-1 g/L su. Multivitamin: üretici dozajı",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "clinical_note": "Butirat + Betain sinerjisi: Butirat bağırsak sağlığını, Betain metil donörü olarak protein sentezini destekler. Canlı ağırlık +%2-5 artış hedeflenir.",
+      "withdrawal_period": 0
+    },
+    "15": {
+      "day": 15,
+      "date": "2026-02-28",
+      "age": "15. gün",
+      "strategic_focus": "PERFORMANS FAZI - BUTİRAT + BETAİN",
+      "morning": {
+        "drug": "Sodyum Butirat + Betain",
+        "dosage": "Butirat: 0.5-1 g/L. Betain: 0.5-1 g/L",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Amino Asit + Enzim",
+        "dosage": "Amino asit: 0.5-1 mL/L su. Enzim: üretici dozajı",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "clinical_note": "Enzim takviyesi ile yem hammaddelerindeki anti-besinsel faktörleri parçalayarak enerji ve protein kullanılabilirliğini artırıyoruz.",
+      "withdrawal_period": 0
+    },
+    "16": {
+      "day": 16,
+      "date": "2026-03-01",
+      "age": "16. gün",
+      "strategic_focus": "PERFORMANS FAZI - BUTİRAT + BETAİN",
+      "morning": {
+        "drug": "Sodyum Butirat + Betain",
+        "dosage": "Butirat: 0.5-1 g/L. Betain: 0.5-1 g/L",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Multivitamin",
+        "dosage": "Üretici dozajı",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Üretici dozajına göre"
+      },
+      "clinical_note": "Büyüme hızı artıyor. Hayvanlar 400-500g civarında olmalı. Yem tüketimi artışını izleyin. Altlık nemini kontrol edin.",
+      "withdrawal_period": 0
+    },
+    "17": {
+      "day": 17,
+      "date": "2026-03-02",
+      "age": "17. gün",
+      "strategic_focus": "PERFORMANS FAZI - GEÇİŞ",
+      "morning": {
+        "drug": "Sodyum Butirat",
+        "dosage": "0.5-1 g/L su",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Karaciğer Koruyucu (Hepato)",
+        "dosage": "Üretici dozajı",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Üretici dozajına göre"
+      },
+      "clinical_note": "2. Blok antibiyotiğe hazırlık. Karaciğeri antibiyotik öncesi koruma altına alıyoruz. Butirat ile bağırsak bütünlüğünü son kez güçlendiriyoruz.",
+      "withdrawal_period": 0
+    },
+    "18": {
+      "day": 18,
+      "date": "2026-03-03",
+      "age": "18. gün",
+      "strategic_focus": "2. BLOK ANTİBİYOTİK - CRD/NE",
+      "morning": {
+        "drug": "Tilosin Tartrat",
+        "dosage": "75-100 mg/kg CA/gün (yaklaşık 500 mg/L su)",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (500/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Hepato (Karaciğer Koruyucu)",
+        "dosage": "Üretici dozajı",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Üretici dozajına göre"
+      },
+      "clinical_note": "2. BLOK BAŞLANGIÇ: Tilosin, Makrolid grubundan olup Mycoplasma (CRD) ve Clostridium perfringens (NE) için spesifiktir. Neomisin'den farklı grup olması direnç rotasyonu sağlar. 18-21. günler NE için en riskli dönemdir.",
+      "withdrawal_period": 1,
+      "critical": true
+    },
+    "19": {
+      "day": 19,
+      "date": "2026-03-04",
+      "age": "19. gün",
+      "strategic_focus": "2. BLOK ANTİBİYOTİK - CRD/NE",
+      "morning": {
+        "drug": "Tilosin Tartrat",
+        "dosage": "75-100 mg/kg CA/gün (yaklaşık 500 mg/L su)",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (500/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Hepato + Elektrolit",
+        "dosage": "Hepato: üretici dozajı. Elektrolit: 0.5-1 g/L",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (1/1000) ÷ 6"
+      },
+      "clinical_note": "Tedavinin 2. günü. Tilosin hem solunum yollarına hem bağırsağa iyi nüfuz eder. CRD belirtileri (hırıltı, burun akıntısı) varsa dozaj üst sınırda tutulmalı.",
+      "withdrawal_period": 1
+    },
+    "20": {
+      "day": 20,
+      "date": "2026-03-05",
+      "age": "20. gün",
+      "strategic_focus": "2. BLOK ANTİBİYOTİK - CRD/NE (SON)",
+      "morning": {
+        "drug": "Tilosin Tartrat",
+        "dosage": "75-100 mg/kg CA/gün (yaklaşık 500 mg/L su)",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (500/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Vitamin C + Elektrolit",
+        "dosage": "Vit C: 500 mg/L su. Elektrolit: 0.5-1 g/L",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (500/1000) ÷ 6"
+      },
+      "clinical_note": "2. Blok son gün. Tilosin kalıntı süresi 1-5 gün. Vitamin C ile bağışıklık takviyesi. Solunum seslerini dikkatle dinleyin.",
+      "withdrawal_period": 1
+    },
+    "21": {
+      "day": 21,
+      "date": "2026-03-06",
+      "age": "21. gün",
+      "strategic_focus": "2. FLORA ONARIMI",
+      "morning": {
+        "drug": "Probiyotik (Bacillus subtilis bazlı)",
+        "dosage": "0.5-1 g/L su",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Multivitamin (AD3E + B-Kompleks)",
+        "dosage": "Üretici dozajı",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Üretici dozajına göre"
+      },
+      "clinical_note": "Antibiyotik sonrası 2. flora onarımı. Probiyotikler Clostridium'un bağırsakta yeniden çoğalmasını engeller (Rekabetçi Dışlama).",
+      "withdrawal_period": 0
+    },
+    "22": {
+      "day": 22,
+      "date": "2026-03-07",
+      "age": "22. gün",
+      "strategic_focus": "2. FLORA ONARIMI",
+      "morning": {
+        "drug": "Probiyotik",
+        "dosage": "0.5-1 g/L su",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Amino Asit + Enzim",
+        "dosage": "Amino asit: 0.5-1 mL/L su. Enzim: üretici dozajı",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "clinical_note": "Flora onarımı devam. Amino asitlerle kas gelişimini hızlandırıyoruz. Hayvanlar 900-1000g civarında olmalı.",
+      "withdrawal_period": 0
+    },
+    "23": {
+      "day": 23,
+      "date": "2026-03-08",
+      "age": "23. gün",
+      "strategic_focus": "2. FLORA ONARIMI + BUTİRAT",
+      "morning": {
+        "drug": "Sodyum Butirat + Probiyotik",
+        "dosage": "Butirat: 0.5-1 g/L. Probiyotik: 0.5-1 g/L",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Betain + Multivitamin",
+        "dosage": "Betain: 0.5-1 g/L su. Multivitamin: üretici dozajı",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "clinical_note": "Butirat + Probiyotik kombinasyonu: Butirat bağırsak hücrelerinin enerji kaynağı, probiyotik flora dengesini korur. Sinerjik etki.",
+      "withdrawal_period": 0
+    },
+    "24": {
+      "day": 24,
+      "date": "2026-03-09",
+      "age": "24. gün",
+      "strategic_focus": "BÜYÜME PATLAMASI",
+      "morning": {
+        "drug": "Sodyum Butirat + Betain",
+        "dosage": "Butirat: 0.5-1 g/L. Betain: 0.5-1 g/L",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Amino Asit + Enzim",
+        "dosage": "Amino asit: 0.5-1 mL/L su. Enzim: üretici dozajı",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "clinical_note": "En hızlı büyüme dönemi başlıyor. Butirat + Betain + Amino Asit üçlüsü FCR'ı minimumda tutar. Günlük ağırlık artışı 70-80g olmalı.",
+      "withdrawal_period": 0
+    },
+    "25": {
+      "day": 25,
+      "date": "2026-03-10",
+      "age": "25. gün",
+      "strategic_focus": "BÜYÜME PATLAMASI",
+      "morning": {
+        "drug": "Sodyum Butirat + Betain",
+        "dosage": "Butirat: 0.5-1 g/L. Betain: 0.5-1 g/L",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Multivitamin",
+        "dosage": "Üretici dozajı",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Üretici dozajına göre"
+      },
+      "clinical_note": "Büyüme hızı zirveye yaklaşıyor. Su tüketimi artıyor. Nipple hatlarını kontrol edin.",
+      "withdrawal_period": 0
+    },
+    "26": {
+      "day": 26,
+      "date": "2026-03-11",
+      "age": "26. gün",
+      "strategic_focus": "BÜYÜME PATLAMASI",
+      "morning": {
+        "drug": "Sodyum Butirat",
+        "dosage": "0.5-1 g/L su",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Betain + Amino Asit",
+        "dosage": "Betain: 0.5-1 g/L su. Amino asit: 0.5-1 mL/L",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "clinical_note": "Hayvanlar 1300-1500g civarında. Yoğunluk stresi başlayabilir. Havalandırmayı artırın.",
+      "withdrawal_period": 0
+    },
+    "27": {
+      "day": 27,
+      "date": "2026-03-12",
+      "age": "27. gün",
+      "strategic_focus": "BÜYÜME PATLAMASI",
+      "morning": {
+        "drug": "Sodyum Butirat + Betain",
+        "dosage": "Butirat: 0.5-1 g/L. Betain: 0.5-1 g/L",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Enzim + Multivitamin",
+        "dosage": "Enzim: üretici dozajı. Multivitamin: üretici dozajı",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Üretici dozajına göre"
+      },
+      "clinical_note": "Yem dönüşümü kritik. FCR 1.35-1.40 aralığında olmalı. Altlık nemini %25-30 arasında tutun.",
+      "withdrawal_period": 0
+    },
+    "28": {
+      "day": 28,
+      "date": "2026-03-13",
+      "age": "28. gün",
+      "strategic_focus": "BÜYÜME PATLAMASI",
+      "morning": {
+        "drug": "Sodyum Butirat",
+        "dosage": "0.5-1 g/L su",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Betain + Karaciğer Koruyucu (Hepato)",
+        "dosage": "Betain: 0.5-1 g/L su. Hepato: üretici dozajı",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "clinical_note": "Karaciğer desteği: Hızlı büyüme karaciğere yük bindirir. Hepato ile yağlı karaciğer sendromunu önlüyoruz.",
+      "withdrawal_period": 0
+    },
+    "29": {
+      "day": 29,
+      "date": "2026-03-14",
+      "age": "29. gün",
+      "strategic_focus": "FİNİŞ DÖNEMİ",
+      "morning": {
+        "drug": "Sodyum Butirat + Betain",
+        "dosage": "Butirat: 0.5-1 g/L. Betain: 0.5-1 g/L",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Amino Asit + Enzim",
+        "dosage": "Amino asit: 0.5-1 mL/L su. Enzim: üretici dozajı",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "clinical_note": "Finiş yemi geçişi. Protein oranı düşer, enerji artar. Butirat + Betain ile yemden yararlanmayı koruyoruz.",
+      "withdrawal_period": 0
+    },
+    "30": {
+      "day": 30,
+      "date": "2026-03-15",
+      "age": "30. gün",
+      "strategic_focus": "FİNİŞ DÖNEMİ",
+      "morning": {
+        "drug": "Sodyum Butirat + Betain",
+        "dosage": "Butirat: 0.5-1 g/L. Betain: 0.5-1 g/L",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Multivitamin",
+        "dosage": "Üretici dozajı",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Üretici dozajına göre"
+      },
+      "clinical_note": "Hayvanlar 1800-2000g civarında. Bacak sağlığını kontrol edin. Vitamin D3 desteği kemik mineralizasyonu için önemli.",
+      "withdrawal_period": 0
+    },
+    "31": {
+      "day": 31,
+      "date": "2026-03-16",
+      "age": "31. gün",
+      "strategic_focus": "FİNİŞ DÖNEMİ",
+      "morning": {
+        "drug": "Sodyum Butirat",
+        "dosage": "0.5-1 g/L su",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Betain + Amino Asit",
+        "dosage": "Betain: 0.5-1 g/L su. Amino asit: 0.5-1 mL/L",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "clinical_note": "Kas gelişimi devam ediyor. Göğüs eti oranını artırmak için Lizin ve Metiyonin kritik.",
+      "withdrawal_period": 0
+    },
+    "32": {
+      "day": 32,
+      "date": "2026-03-17",
+      "age": "32. gün",
+      "strategic_focus": "FİNİŞ DÖNEMİ",
+      "morning": {
+        "drug": "Sodyum Butirat + Betain",
+        "dosage": "Butirat: 0.5-1 g/L. Betain: 0.5-1 g/L",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Enzim + Elektrolit",
+        "dosage": "Enzim: üretici dozajı. Elektrolit: 0.5-1 g/L",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (1/1000) ÷ 6"
+      },
+      "clinical_note": "Sıcaklık stresi riski artıyor. Elektrolit ile su tüketimini destekleyin. Betain ozmotik stres regülatörü olarak kritik.",
+      "withdrawal_period": 0
+    },
+    "33": {
+      "day": 33,
+      "date": "2026-03-18",
+      "age": "33. gün",
+      "strategic_focus": "FİNİŞ DÖNEMİ",
+      "morning": {
+        "drug": "Sodyum Butirat + Betain",
+        "dosage": "Butirat: 0.5-1 g/L. Betain: 0.5-1 g/L",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Multivitamin + Amino Asit",
+        "dosage": "Multivitamin: üretici dozajı. Amino asit: 0.5-1 mL/L",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "clinical_note": "Hayvanlar 2200-2400g civarında. FCR 1.50-1.55 hedefi. Ani ölüm sendromu (SDS) riski artıyor, aydınlatma programını kontrol edin.",
+      "withdrawal_period": 0
+    },
+    "34": {
+      "day": 34,
+      "date": "2026-03-19",
+      "age": "34. gün",
+      "strategic_focus": "FİNİŞ DÖNEMİ",
+      "morning": {
+        "drug": "Sodyum Butirat",
+        "dosage": "0.5-1 g/L su",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Betain + Karaciğer Koruyucu (Hepato)",
+        "dosage": "Betain: 0.5-1 g/L su. Hepato: üretici dozajı",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "clinical_note": "Son karaciğer desteği. Kesim öncesi metabolik yükü azaltıyoruz.",
+      "withdrawal_period": 0
+    },
+    "35": {
+      "day": 35,
+      "date": "2026-03-20",
+      "age": "35. gün",
+      "strategic_focus": "FİNİŞ DÖNEMİ - SON DESTEK",
+      "morning": {
+        "drug": "Sodyum Butirat + Betain",
+        "dosage": "Butirat: 0.5-1 g/L. Betain: 0.5-1 g/L",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (0.75/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Multivitamin + Elektrolit",
+        "dosage": "Multivitamin: üretici dozajı. Elektrolit: 0.5-1 g/L",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (1/1000) ÷ 6"
+      },
+      "clinical_note": "Performans katkılarının son günü. Yarından itibaren kesim hazırlığı başlıyor.",
+      "withdrawal_period": 0
+    },
+    "36": {
+      "day": 36,
+      "date": "2026-03-21",
+      "age": "36. gün",
+      "strategic_focus": "KESİM HAZIRLIĞI",
+      "morning": {
+        "drug": "Vitamin C (Yüksek Doz)",
+        "dosage": "1 g/L su",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (1000/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Elektrolit",
+        "dosage": "1 g/L su",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (1/1000) ÷ 6"
+      },
+      "clinical_note": "Yasal arınma süresi başlıyor. Antibiyotik ve Butirat/Betain kesildi. Vitamin C ile stres direncini koruyoruz.",
+      "withdrawal_period": 0
+    },
+    "37": {
+      "day": 37,
+      "date": "2026-03-22",
+      "age": "37. gün",
+      "strategic_focus": "KESİM HAZIRLIĞI",
+      "morning": {
+        "drug": "Vitamin C + Elektrolit",
+        "dosage": "Vit C: 1 g/L su. Elektrolit: 1 g/L",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (1/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Karaciğer Koruyucu (Hepato)",
+        "dosage": "Üretici dozajı",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Üretici dozajına göre"
+      },
+      "clinical_note": "Karaciğer desteği: Kesim öncesi metabolik stresi azaltır, et kalitesini korur.",
+      "withdrawal_period": 0
+    },
+    "38": {
+      "day": 38,
+      "date": "2026-03-23",
+      "age": "38. gün",
+      "strategic_focus": "KESİM HAZIRLIĞI",
+      "morning": {
+        "drug": "Multivitamin (AD3E + B-Kompleks)",
+        "dosage": "Üretici dozajı",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Üretici dozajına göre"
+      },
+      "evening": {
+        "drug": "Amino Asit + Elektrolit",
+        "dosage": "Amino asit: 0.5-1 mL/L su. Elektrolit: 1 g/L",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Akşam su hazırlama miktarı × (1/1000) ÷ 6"
+      },
+      "clinical_note": "Genel direnç ve enerji desteği. Hayvanlar 2600-2800g civarında olmalı.",
+      "withdrawal_period": 0
+    },
+    "39": {
+      "day": 39,
+      "date": "2026-03-24",
+      "age": "39. gün",
+      "strategic_focus": "TAM ARINMA",
+      "morning": {
+        "drug": "Temiz Su",
+        "dosage": "Sadece temiz, klorlanmış su",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Normal su tüketimi"
+      },
+      "evening": {
+        "drug": "Temiz Su",
+        "dosage": "Sadece temiz, klorlanmış su",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Normal su tüketimi"
+      },
+      "clinical_note": "Yasal arınma dönemi. Hiçbir ilaç veya katkı kullanılmaz. Sadece temiz su. Gıda güvenliği için zorunlu.",
+      "withdrawal_period": 0
+    },
+    "40": {
+      "day": 40,
+      "date": "2026-03-25",
+      "age": "40. gün",
+      "strategic_focus": "TAM ARINMA",
+      "morning": {
+        "drug": "Temiz Su",
+        "dosage": "Sadece temiz, klorlanmış su",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Normal su tüketimi"
+      },
+      "evening": {
+        "drug": "Temiz Su",
+        "dosage": "Sadece temiz, klorlanmış su",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Normal su tüketimi"
+      },
+      "clinical_note": "Arınma devam. Hayvanları strese sokmayın. Aydınlatmayı kısın. Yakalama hazırlığı yapın.",
+      "withdrawal_period": 0
+    },
+    "41": {
+      "day": 41,
+      "date": "2026-03-26",
+      "age": "41. gün",
+      "strategic_focus": "KESİM ÖNCESİ",
+      "morning": {
+        "drug": "Vitamin C (İsteğe Bağlı)",
+        "dosage": "500 mg/L su (kalıntı riski yok)",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Sabah su hazırlama miktarı × (500/1000) ÷ 6"
+      },
+      "evening": {
+        "drug": "Temiz Su",
+        "dosage": "Sadece temiz, klorlanmış su",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Normal su tüketimi"
+      },
+      "clinical_note": "Yakalama stresi azaltma. Vitamin C kalıntı bırakmaz, yasal olarak güvenlidir. Hayvanları sakin tutun.",
+      "withdrawal_period": 0
+    },
+    "42": {
+      "day": 42,
+      "date": "2026-03-27",
+      "age": "42. gün",
+      "strategic_focus": "KESİM GÜNÜ",
+      "morning": {
+        "drug": "Temiz Su",
+        "dosage": "Sadece temiz, klorlanmış su",
+        "time": "08:00-14:00",
+        "dosage_per_house": "Normal su tüketimi"
+      },
+      "evening": {
+        "drug": "-",
+        "dosage": "Yem 8-12 saat önce kesilmiş olmalı",
+        "time": "16:00-22:00",
+        "dosage_per_house": "Kesim günü"
+      },
+      "clinical_note": "Kesim günü. Yem en az 8-12 saat önce kesilmiş olmalı. Su son ana kadar verilir. Nakliye sırasında havalandırma kritik.",
+      "withdrawal_period": 0,
+      "final_day": true
+    }
+  }
+}
