@@ -7,6 +7,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 from datetime import datetime, timedelta
 import numpy as np
+from typing import Dict
 
 class DashboardAnalytics:
     """Advanced dashboard and analytics system"""
