@@ -125,6 +125,82 @@ def calculate_feed_order(feed_days, current_day):
     
     return orders
 
+
+def calculate_advanced_feed_planning(banvit_data, house_data, current_day, silo_capacities):
+    """
+    İleri seviye yem sipariş planlayıcısı
+    - Silo kapasitesi kontrol
+    - Gelecek tüketim tahmini (Banvit)
+    - Haftaiçi planlama
+    - 9 ton optimizasyonu
+    """
+    from datetime import datetime, timedelta
+    
+    planning = {}
+    today = datetime.now()
+    day_of_week = today.weekday()  # 0=Monday, 6=Sunday
+    
+    for house_name, house_info in house_data.items():
+        live_birds = house_info['live']
+        silo_remaining = house_info['silo']
+        silo_capacity = silo_capacities.get(house_name, 50)  # Default 50 ton
+        
+        # Gelecek 7 gün için tüketim tahmini
+        future_consumption = 0
+        for future_day in range(current_day, min(current_day + 7, 43)):
+            day_data = banvit_data.get(str(future_day), {})
+            daily_consumption_per_bird = day_data.get('yem_tüketimi', 150) / 1000
+            future_consumption += live_birds * daily_consumption_per_bird
+        
+        # Kalan gün hesabı
+        avg_daily_consumption = future_consumption / 7 if future_consumption > 0 else 0
+        days_remaining = silo_remaining / avg_daily_consumption if avg_daily_consumption > 0 else 999
+        
+        # Silo kapasitesi göz önünde bulundurarak sipariş önerisi
+        available_silo_space = silo_capacity - silo_remaining
+        
+        # 9 ton katları hesapla (silo kapasitesini aşmayacak şekilde)
+        max_order_9_ton_units = int(available_silo_space / 9)
+        recommended_order = max_order_9_ton_units * 9
+        
+        # Haftaiçi planlama
+        weekday_names = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar']
+        today_name = weekday_names[day_of_week]
+        is_weekday = day_of_week < 5
+        
+        # Yem bitme tahmini
+        estimated_depletion_day = current_day + days_remaining
+        
+        # Uyarı mesajı
+        warning_message = ""
+        if days_remaining < 3:
+            if is_weekday:
+                warning_message = f"ACIL: Bugün ({today_name}) sipariş ver! {days_remaining:.1f} gün yem kaldı."
+            else:
+                next_weekday = (5 - day_of_week) % 7  # Pazartesiye kaç gün kaldı
+                warning_message = f"ACIL: Pazartesi ({next_weekday} gün sonra) sipariş ver! {days_remaining:.1f} gün yem kaldı."
+        elif days_remaining < 5:
+            warning_message = f"UYARI: {days_remaining:.1f} gün yem kaldı. Haftaiçi sipariş planla."
+        else:
+            warning_message = f"Yem yeterli ({days_remaining:.1f} gün)"
+        
+        planning[house_name] = {
+            'days_remaining': days_remaining,
+            'silo_remaining': silo_remaining,
+            'silo_capacity': silo_capacity,
+            'available_space': available_silo_space,
+            'recommended_order': recommended_order,
+            'max_order_tons': max_order_9_ton_units * 9,
+            'future_consumption_7days': future_consumption,
+            'avg_daily_consumption': avg_daily_consumption,
+            'estimated_depletion_day': estimated_depletion_day,
+            'is_weekday': is_weekday,
+            'today_name': today_name,
+            'warning': warning_message
+        }
+    
+    return planning
+
 def calculate_metrics():
     d = st.session_state.data
     current_day = get_current_day()
@@ -262,24 +338,29 @@ elif page == "📝 Günlük Veriler":
 
 # ============ PAGE: YEM TAKIBI ============
 elif page == "🚚 Yem Takibi":
-    st.title("Yem Takibi ve Siparişi")
+    st.title("Yem Takibi ve Ileri Siparis Planlama")
     
     # Calculate current metrics
     metrics = calculate_metrics()
     current_day = get_current_day()
     
-    # Calculate feed days remaining
-    feed_days = calculate_feed_days_remaining(st.session_state.banvit_data, metrics['house_data'], current_day)
+    # Get silo capacities from settings
+    silo_capacities = st.session_state.data.get('settings', {}).get('silo_capacities', {})
     
-    # Calculate feed orders
-    feed_orders = calculate_feed_order(feed_days, current_day)
+    # Calculate advanced planning
+    planning = calculate_advanced_feed_planning(
+        st.session_state.banvit_data,
+        metrics['house_data'],
+        current_day,
+        silo_capacities
+    )
     
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns([1, 2])
     
     with col1:
-        st.subheader("Yem İrsaliyesi")
+        st.subheader("Yem Irsaliyesi")
         with st.form("feed_invoice_form"):
-            invoice_date = st.date_input("Tarih", datetime.now().date())
+            invoice_date = st.date_input("Tarih")
             feed_type = st.selectbox("Yem Türü", ["Civciv", "Büyütme", "Kesim"])
             amount_kg = st.number_input("Miktar (kg)", min_value=0, step=100)
             supplier = st.text_input("Tedarikçi")
@@ -295,20 +376,31 @@ elif page == "🚚 Yem Takibi":
                 st.success("Yem kaydedildi")
     
     with col2:
-        st.subheader("Sipariş Uyarıları")
+        st.subheader("Ileri Siparis Planlama")
         
-        for house_name, order_info in feed_orders.items():
-            if order_info['order_needed']:
-                st.error(f"🚨 {house_name}: {order_info['days_left']:.1f} gün yem kaldı - {order_info['recommendation']} SİPARİŞ LAZIM!")
-                if not order_info['is_weekday']:
-                    st.warning(f"⚠️ Bugün hafta sonu! Pazartesi sipariş verebilirsin.")
-            else:
-                st.success(f"✅ {house_name}: {order_info['recommendation']} ({order_info['days_left']:.1f} gün)")
+        for house_name, plan in planning.items():
+            with st.container():
+                col_a, col_b = st.columns(2)
+                
+                with col_a:
+                    st.metric(f"{house_name}", f"{plan['days_remaining']:.1f} gün")
+                    st.write(f"Siloda: {plan['silo_remaining']:.0f} / {plan['silo_capacity']} ton")
+                    st.write(f"Günlük: {plan['avg_daily_consumption']:.0f} kg")
+                
+                with col_b:
+                    if plan['days_remaining'] < 3:
+                        st.error(plan['warning'])
+                    elif plan['days_remaining'] < 5:
+                        st.warning(plan['warning'])
+                    else:
+                        st.success(plan['warning'])
+                    
+                    st.write(f"**Siparis Onerisi:** {plan['recommended_order']:.0f} ton")
+                    st.write(f"**Silo Bos Yer:** {plan['available_space']:.0f} ton")
+                
+                st.divider()
     
-    st.divider()
-    
-    # Feed history
-    st.subheader("Yem Geliş Geçmişi")
+    st.subheader("Yem Gelis Gecmisi")
     if st.session_state.data['feed_invoices']:
         for inv in st.session_state.data['feed_invoices']:
             st.write(f"{inv['date']} - {inv['type']}: {inv['amount']} kg ({inv['supplier']})")
