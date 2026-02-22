@@ -5,6 +5,10 @@ import plotly.express as px
 from datetime import datetime, timedelta
 import json
 from pathlib import Path
+import os
+from google import genai
+from google.genai import types
+
 
 # Sayfa Konfigürasyonu
 st.set_page_config(
@@ -22,6 +26,18 @@ def load_banvit_data():
             return json.load(f)
     except:
         return {}
+
+
+# Gemini AI Initialization
+@st.cache_resource
+def init_gemini():
+    api_key = os.getenv('GEMINI_API_KEY')
+    if api_key:
+        client = genai.Client(api_key=api_key)
+        return client
+    return None
+
+gemini_client = init_gemini()
 
 # Session State Başlat
 def init_session_state():
@@ -299,9 +315,62 @@ def page_ai_bilgi_bankasi():
     if uploaded_file:
         st.image(uploaded_file, caption="Yuklenen Fotograf", use_column_width=True)
         
-        if st.button("AI Analiz Yap"):
-            st.info("AI analiz yapiliyor...")
-            st.success("Analiz tamamlandi!")
+        if st.button("AI Analiz Yap", type="primary"):
+            if gemini_client:
+                with st.spinner("AI analiz yapiliyor..."):
+                    try:
+                        # Upload image
+                        file_path = f"/tmp/{uploaded_file.name}"
+                        with open(file_path, "wb") as f:
+                            f.write(uploaded_file.getbuffer())
+                        
+                        # Upload to Gemini
+                        uploaded_gemini = gemini_client.files.upload(path=file_path)
+                        
+                        # Analyze with Gemini
+                        response = gemini_client.models.generate_content(
+                            model='gemini-2.0-flash-exp',
+                            contents=[
+                                types.Content(
+                                    role="user",
+                                    parts=[
+                                        types.Part.from_uri(
+                                            file_uri=uploaded_gemini.uri,
+                                            mime_type=uploaded_gemini.mime_type
+                                        ),
+                                        types.Part.from_text(
+                                            "Bu bir tavuk ciftligi otopsi, FAL raporu veya antibiyogram fotografidir. "
+                                            "Lutfen fotograftaki bilgileri analiz et ve asagidaki bilgileri ver:\n"
+                                            "1. Tespit edilen hastalik veya sorun\n"
+                                            "2. Etkilenen organlar\n"
+                                            "3. Onerilen ilac tedavisi\n"
+                                            "4. Dikkat edilmesi gerekenler\n"
+                                            "Turkce cevap ver."
+                                        )
+                                    ]
+                                )
+                            ]
+                        )
+                        
+                        st.success("AI Analiz Tamamlandi!")
+                        st.markdown("### Analiz Sonucu:")
+                        st.write(response.text)
+                        
+                        # Clean up
+                        os.remove(file_path)
+                        
+                    except Exception as e:
+                        st.error(f"AI analiz hatasi: {str(e)}")
+            else:
+                st.warning("Gemini API baglantisi yok. Simulasyon modu:")
+                st.info("""
+                **AI Analiz Sonucu (Simulasyon):**
+                
+                1. **Tespit:** Omfalitis/Septisemi belirtileri
+                2. **Etkilenen Organlar:** Karaciger, akciger
+                3. **Onerilen Tedavi:** Neomisin Sulfat 100mg/L, 4 gun
+                4. **Dikkat:** Hepato ile karaciger korumasi onemli
+                """)
 
 # İlaç Envanteri Sayfası
 def page_ilac_envanteri():
@@ -329,12 +398,53 @@ def page_sohbet():
     
     st.info("AI Asistan ile canli sohbet")
     
-    user_input = st.text_input("Mesajiniz:")
+    # Initialize chat history
+    if 'chat_history' not in st.session_state:
+        st.session_state.chat_history = []
+    
+    # Display chat history
+    for msg in st.session_state.chat_history:
+        if msg['role'] == 'user':
+            st.markdown(f"**Siz:** {msg['content']}")
+        else:
+            st.markdown(f"**AI:** {msg['content']}")
+    
+    st.markdown("---")
+    
+    user_input = st.text_input("Mesajiniz:", key="chat_input")
     
     if st.button("Gonder"):
         if user_input:
-            st.write(f"**Siz:** {user_input}")
-            st.write(f"**AI:** Mesajiniz alindi. Size yardimci olacagim.")
+            # Add user message
+            st.session_state.chat_history.append({'role': 'user', 'content': user_input})
+            
+            if gemini_client:
+                try:
+                    # Get AI response
+                    response = gemini_client.models.generate_content(
+                        model='gemini-2.0-flash-exp',
+                        contents=f"""Sen bir tavuk ciftligi yonetim asistanisin. 
+                        Kullanici sorusu: {user_input}
+                        
+                        Ciftlik bilgileri:
+                        - Ciftlik: {st.session_state.ayarlar['ciftlik_adi']}
+                        - Kumes sayisi: 4
+                        - Toplam civciv: {sum(st.session_state.ayarlar['kumes_civciv'])}
+                        
+                        Lutfen Turkce, kisa ve net cevap ver."""
+                    )
+                    
+                    ai_response = response.text
+                    
+                except Exception as e:
+                    ai_response = f"Uzgunum, bir hata olustu: {str(e)}"
+            else:
+                ai_response = "Merhaba! Size nasil yardimci olabilirim? (Gemini API baglantisi yok, simulasyon modu)"
+            
+            # Add AI response
+            st.session_state.chat_history.append({'role': 'assistant', 'content': ai_response})
+            
+            st.rerun()
 
 # Ana Uygulama
 def main():
