@@ -230,20 +230,20 @@ def page_gunluk_veriler():
             
             deaths = st.number_input(
                 f"K{kumes_id} Ölüm",
-                value=day_data['deaths'].get(kumes_id, 0),
+                value=int(day_data['deaths'].get(kumes_id, 0)),
                 min_value=0,
                 key=f"deaths_{day}_{kumes_id}"
             )
-            day_data['deaths'][kumes_id] = deaths
+            day_data['deaths'][kumes_id] = int(deaths)
             
             weight = st.number_input(
                 f"K{kumes_id} Ağırlık (g)",
-                value=day_data['weight'].get(kumes_id, 0),
+                value=int(day_data['weight'].get(kumes_id, 0)),
                 min_value=0,
                 step=1,
                 key=f"weight_{day}_{kumes_id}"
             )
-            day_data['weight'][kumes_id] = weight
+            day_data['weight'][kumes_id] = int(weight)
     
     # Water and Feed
     st.subheader("Su ve Yem Verileri")
@@ -254,29 +254,29 @@ def page_gunluk_veriler():
         with [col1, col2, col3, col4][idx]:
             water = st.number_input(
                 f"K{kumes_id} Su (L)",
-                value=day_data['water_consumption'].get(kumes_id, 0),
-                min_value=0,
+                value=float(day_data['water_consumption'].get(kumes_id, 0)),
+                min_value=0.0,
                 key=f"water_{day}_{kumes_id}"
             )
-            day_data['water_consumption'][kumes_id] = water
+            day_data['water_consumption'][kumes_id] = float(water)
             
             feed = st.number_input(
                 f"K{kumes_id} Yem (kg)",
-                value=day_data['feed_consumption'].get(kumes_id, 0),
-                min_value=0,
+                value=float(day_data['feed_consumption'].get(kumes_id, 0)),
+                min_value=0.0,
                 step=0.1,
                 key=f"feed_{day}_{kumes_id}"
             )
-            day_data['feed_consumption'][kumes_id] = feed
+            day_data['feed_consumption'][kumes_id] = float(feed)
             
             silo = st.number_input(
                 f"K{kumes_id} Silo Kalan (kg)",
-                value=day_data['silo_remaining'].get(kumes_id, 0),
-                min_value=0,
-                step=10,
+                value=float(day_data['silo_remaining'].get(kumes_id, 0)),
+                min_value=0.0,
+                step=10.0,
                 key=f"silo_{day}_{kumes_id}"
             )
-            day_data['silo_remaining'][kumes_id] = silo
+            day_data['silo_remaining'][kumes_id] = float(silo)
     
     # Notes
     st.subheader("Notlar")
