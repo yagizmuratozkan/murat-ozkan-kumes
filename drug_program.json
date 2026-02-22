@@ -1,0 +1,261 @@
+{
+  "6": {
+    "gun": 6,
+    "tarih": "19.02.2026",
+    "sabah": "NEOMİSİN SÜLFAT (100 mg/L su)",
+    "aksam": "Hepato (Karaciğer Koruyucu) + Elektrolit",
+    "not": "KRİTİK: Otopside Omfalitis/Septisemi teyit edildi. Antibiyogramda Neomisin +++ (en yüksek hassasiyet)."
+  },
+  "7": {
+    "gun": 7,
+    "tarih": "20.02.2026",
+    "sabah": "NEOMİSİN SÜLFAT (100 mg/L su)",
+    "aksam": "Hepato + Elektrolit",
+    "not": "Tedavinin 2. günü. Ölümlerde azalma beklenir."
+  },
+  "8": {
+    "gun": 8,
+    "tarih": "21.02.2026",
+    "sabah": "NEOMİSİN SÜLFAT (100 mg/L su)",
+    "aksam": "Hepato + Elektrolit",
+    "not": "Tedavinin 3. günü. Ölümler durmalı."
+  },
+  "9": {
+    "gun": 9,
+    "tarih": "22.02.2026",
+    "sabah": "NEOMİSİN SÜLFAT (100 mg/L su)",
+    "aksam": "Hepato + Vitamin C",
+    "not": "Tedavinin 4. ve son günü. Neomisin kalıntı süresi çok kısa (0-1 gün)."
+  },
+  "10": {
+    "gun": 10,
+    "tarih": "23.02.2026",
+    "sabah": "Probiyotik (Bacillus subtilis bazlı)",
+    "aksam": "Multivitamin (AD3E + B-Kompleks)",
+    "not": "Antibiyotik kürü bağırsak florasını tahrip etti. Probiyotik ile faydalı bakterileri yeniden yerleştiriyoruz."
+  },
+  "11": {
+    "gun": 11,
+    "tarih": "24.02.2026",
+    "sabah": "Probiyotik (Bacillus subtilis bazlı)",
+    "aksam": "Amino Asit + Elektrolit",
+    "not": "Flora onarımının 2. günü. Amino asitler ile kas gelişimi desteklenir."
+  },
+  "12": {
+    "gun": 12,
+    "tarih": "25.02.2026",
+    "sabah": "Probiyotik (Bacillus subtilis bazlı)",
+    "aksam": "Amino Asit + Multivitamin",
+    "not": "Flora onarımının son günü. Bağırsak villus yapısı toparlanmaya başlar."
+  },
+  "13": {
+    "gun": 13,
+    "tarih": "26.02.2026",
+    "sabah": "Sodyum Butirat",
+    "aksam": "Betain + Elektrolit",
+    "not": "KRİTİK DÖNÜM NOKTASI: Butirat bağırsak villus büyümesini %15-20 artırır."
+  },
+  "14": {
+    "gun": 14,
+    "tarih": "27.02.2026",
+    "sabah": "Sodyum Butirat",
+    "aksam": "Betain + Multivitamin",
+    "not": "Butirat + Betain sinerjisi: Butirat bağırsak sağlığını, Betain protein sentezini destekler."
+  },
+  "15": {
+    "gun": 15,
+    "tarih": "28.02.2026",
+    "sabah": "Sodyum Butirat + Betain",
+    "aksam": "Amino Asit + Enzim",
+    "not": "Enzim takviyesi ile yem hammaddelerindeki anti-besinsel faktörleri parçalıyoruz."
+  },
+  "16": {
+    "gun": 16,
+    "tarih": "01.03.2026",
+    "sabah": "Sodyum Butirat + Betain",
+    "aksam": "Multivitamin",
+    "not": "Büyüme hızı artıyor. Hayvanlar 400-500g civarında olmalı."
+  },
+  "17": {
+    "gun": 17,
+    "tarih": "02.03.2026",
+    "sabah": "Sodyum Butirat",
+    "aksam": "Karaciğer Koruyucu (Hepato)",
+    "not": "2. Blok antibiyotiğe hazırlık. Karaciğeri antibiyotik öncesi koruma altına alıyoruz."
+  },
+  "18": {
+    "gun": 18,
+    "tarih": "03.03.2026",
+    "sabah": "TİLOSİN TARTRAT (500 mg/L su)",
+    "aksam": "Hepato (Karaciğer Koruyucu)",
+    "not": "2. BLOK BAŞLANGIÇ: Tilosin, Mycoplasma (CRD) ve Clostridium perfringens (NE) için spesifiktir."
+  },
+  "19": {
+    "gun": 19,
+    "tarih": "04.03.2026",
+    "sabah": "TİLOSİN TARTRAT (500 mg/L su)",
+    "aksam": "Hepato + Elektrolit",
+    "not": "Tedavinin 2. günü. Tilosin hem solunum yollarına hem bağırsağa iyi nüfuz eder."
+  },
+  "20": {
+    "gun": 20,
+    "tarih": "05.03.2026",
+    "sabah": "TİLOSİN TARTRAT (500 mg/L su)",
+    "aksam": "Vitamin C + Elektrolit",
+    "not": "2. Blok son gün. Tilosin kalıntı süresi 1-5 gün."
+  },
+  "21": {
+    "gun": 21,
+    "tarih": "06.03.2026",
+    "sabah": "Probiyotik (Bacillus subtilis bazlı)",
+    "aksam": "Multivitamin (AD3E + B-Kompleks)",
+    "not": "Antibiyotik sonrası 2. flora onarımı."
+  },
+  "22": {
+    "gun": 22,
+    "tarih": "07.03.2026",
+    "sabah": "Probiyotik",
+    "aksam": "Amino Asit + Enzim",
+    "not": "Flora onarımı devam. Hayvanlar 900-1000g civarında olmalı."
+  },
+  "23": {
+    "gun": 23,
+    "tarih": "08.03.2026",
+    "sabah": "Sodyum Butirat + Probiyotik",
+    "aksam": "Betain + Multivitamin",
+    "not": "Butirat + Probiyotik kombinasyonu: Sinerjik etki."
+  },
+  "24": {
+    "gun": 24,
+    "tarih": "09.03.2026",
+    "sabah": "Sodyum Butirat + Betain",
+    "aksam": "Amino Asit + Enzim",
+    "not": "En hızlı büyüme dönemi başlıyor. Günlük ağırlık artışı 70-80g olmalı."
+  },
+  "25": {
+    "gun": 25,
+    "tarih": "10.03.2026",
+    "sabah": "Sodyum Butirat + Betain",
+    "aksam": "Multivitamin",
+    "not": "Büyüme hızı zirveye yaklaşıyor. Su tüketimi artıyor."
+  },
+  "26": {
+    "gun": 26,
+    "tarih": "11.03.2026",
+    "sabah": "Sodyum Butirat",
+    "aksam": "Betain + Amino Asit",
+    "not": "Hayvanlar 1300-1500g civarında. Yoğunluk stresi başlayabilir."
+  },
+  "27": {
+    "gun": 27,
+    "tarih": "12.03.2026",
+    "sabah": "Sodyum Butirat + Betain",
+    "aksam": "Enzim + Multivitamin",
+    "not": "Yem dönüşümü kritik. FCR 1.35-1.40 aralığında olmalı."
+  },
+  "28": {
+    "gun": 28,
+    "tarih": "13.03.2026",
+    "sabah": "Sodyum Butirat",
+    "aksam": "Betain + Karaciğer Koruyucu (Hepato)",
+    "not": "Karaciğer desteği: Hızlı büyüme karaciğere yük bindirir."
+  },
+  "29": {
+    "gun": 29,
+    "tarih": "14.03.2026",
+    "sabah": "Sodyum Butirat + Betain",
+    "aksam": "Amino Asit + Enzim",
+    "not": "Finiş yemi geçişi. Protein oranı düşer, enerji artar."
+  },
+  "30": {
+    "gun": 30,
+    "tarih": "15.03.2026",
+    "sabah": "Sodyum Butirat + Betain",
+    "aksam": "Multivitamin",
+    "not": "Hayvanlar 1800-2000g civarında. Bacak sağlığını kontrol edin."
+  },
+  "31": {
+    "gun": 31,
+    "tarih": "16.03.2026",
+    "sabah": "Sodyum Butirat",
+    "aksam": "Betain + Amino Asit",
+    "not": "Kas gelişimi devam ediyor. Göğüs eti oranını artırmak için Lizin ve Metiyonin kritik."
+  },
+  "32": {
+    "gun": 32,
+    "tarih": "17.03.2026",
+    "sabah": "Sodyum Butirat + Betain",
+    "aksam": "Enzim + Elektrolit",
+    "not": "Sıcaklık stresi riski artıyor. Elektrolit ile su tüketimini destekleyin."
+  },
+  "33": {
+    "gun": 33,
+    "tarih": "18.03.2026",
+    "sabah": "Sodyum Butirat + Betain",
+    "aksam": "Multivitamin + Amino Asit",
+    "not": "Hayvanlar 2200-2400g civarında. FCR 1.50-1.55 hedefi."
+  },
+  "34": {
+    "gun": 34,
+    "tarih": "19.03.2026",
+    "sabah": "Sodyum Butirat",
+    "aksam": "Betain + Karaciğer Koruyucu (Hepato)",
+    "not": "Son karaciğer desteği. Kesim öncesi metabolik yükü azaltıyoruz."
+  },
+  "35": {
+    "gun": 35,
+    "tarih": "20.03.2026",
+    "sabah": "Sodyum Butirat + Betain",
+    "aksam": "Multivitamin + Elektrolit",
+    "not": "Performans katkılarının son günü. Yarından itibaren kesim hazırlığı başlıyor."
+  },
+  "36": {
+    "gun": 36,
+    "tarih": "21.03.2026",
+    "sabah": "Vitamin C (Yüksek Doz - 1 g/L su)",
+    "aksam": "Elektrolit",
+    "not": "Yasal arınma süresi başlıyor. Antibiyotik ve Butirat/Betain kesildi."
+  },
+  "37": {
+    "gun": 37,
+    "tarih": "22.03.2026",
+    "sabah": "Vitamin C + Elektrolit",
+    "aksam": "Karaciğer Koruyucu (Hepato)",
+    "not": "Karaciğer desteği: Kesim öncesi metabolik stresi azaltır."
+  },
+  "38": {
+    "gun": 38,
+    "tarih": "23.03.2026",
+    "sabah": "Multivitamin (AD3E + B-Kompleks)",
+    "aksam": "Amino Asit + Elektrolit",
+    "not": "Genel direnç ve enerji desteği. Hayvanlar 2600-2800g civarında olmalı."
+  },
+  "39": {
+    "gun": 39,
+    "tarih": "24.03.2026",
+    "sabah": "Temiz Su",
+    "aksam": "Temiz Su",
+    "not": "Yasal arınma dönemi. Hiçbir ilaç veya katkı kullanılmaz."
+  },
+  "40": {
+    "gun": 40,
+    "tarih": "25.03.2026",
+    "sabah": "Temiz Su",
+    "aksam": "Temiz Su",
+    "not": "Arınma devam. Hayvanları strese sokmayın."
+  },
+  "41": {
+    "gun": 41,
+    "tarih": "26.03.2026",
+    "sabah": "Vitamin C (İsteğe Bağlı - 500 mg/L su)",
+    "aksam": "Temiz Su",
+    "not": "Yakalama stresi azaltma. Vitamin C kalıntı bırakmaz."
+  },
+  "42": {
+    "gun": 42,
+    "tarih": "27.03.2026",
+    "sabah": "Temiz Su",
+    "aksam": "-",
+    "not": "Kesim günü. Yem en az 8-12 saat önce kesilmiş olmalı."
+  }
+}

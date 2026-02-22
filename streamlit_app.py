@@ -294,15 +294,36 @@ def page_ilac_programi():
     
     st.info("Nihai Uzman Veteriner Programi - Gun gun ilac takvimi")
     
-    gun = st.slider("Gun Sec", 1, 42, 1)
+    # Load drug program
+    try:
+        with open('drug_program.json', 'r', encoding='utf-8') as f:
+            import json
+            drug_program = json.load(f)
+    except:
+        drug_program = {}
     
-    st.header(f"Gun {gun} - Ilac Uygulamasi")
+    gun = st.slider("Gun Sec", 6, 42, 6)
     
-    st.write("**Sabah:**")
-    st.write("- Ilac bilgisi burada goruntulenecek")
-    
-    st.write("**Aksam:**")
-    st.write("- Ilac bilgisi burada goruntulenecek")
+    if str(gun) in drug_program:
+        program = drug_program[str(gun)]
+        
+        st.header(f"Gun {gun} - {program.get('tarih', '')}")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.subheader("SABAH (08:00-14:00)")
+            st.success(program.get('sabah', 'Bilgi yok'))
+        
+        with col2:
+            st.subheader("AKSAM (16:00-22:00)")
+            st.info(program.get('aksam', 'Bilgi yok'))
+        
+        st.markdown("---")
+        st.subheader("Veteriner Hekim Notu")
+        st.warning(program.get('not', 'Not yok'))
+    else:
+        st.error(f"Gun {gun} icin program bilgisi bulunamadi. Program 6-42. gunler arasinda gecerlidir.")
 
 # AI Bilgi Bankası Sayfası
 def page_ai_bilgi_bankasi():
