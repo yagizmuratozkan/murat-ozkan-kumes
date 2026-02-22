@@ -1,496 +1,272 @@
 import streamlit as st
 import pandas as pd
-import plotly.graph_objects as go
 import plotly.express as px
-from datetime import datetime, timedelta
+import plotly.graph_objects as go
 import json
 import os
-from pathlib import Path
-import sys
+from datetime import datetime, timedelta
+import google.generativeai as genai
+from PIL import Image
+import base64
+import io
 
-# Add current directory to path
-sys.path.insert(0, os.path.dirname(__file__))
+# --- CONFIGURATION ---
+st.set_page_config(page_title="Murat Ozkan Kumes Takip Sistemi", layout="wide", initial_sidebar_state="expanded")
 
-# Import FCR calculations
-from fcr_calculations import calculate_fcr, calculate_mortality_rate, calculate_feed_order_alert
+# --- CUSTOM CSS ---
+st.markdown("""
+<style>
+    .main { background-color: #f5f7f9; }
+    .stMetric { background-color: #ffffff; padding: 15px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .stButton>button { width: 100%; border-radius: 5px; height: 3em; background-color: #1f4e79; color: white; }
+    .stTextInput>div>div>input { background-color: #fff9e6; }
+    .stNumberInput>div>div>input { background-color: #fff9e6; }
+    .stSidebar { background-color: #f0f2f6; }
+</style>
+""", unsafe_allow_html=True)
 
-# ============= PAGE CONFIG =============
-st.set_page_config(
-    page_title="Murat Özkan Kümes Takip Sistemi",
-    page_icon="🐔",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+# --- DATA PERSISTENCE ---
+DATA_FILE = 'farm_data.json'
+BANVIT_FILE = 'banvit_data.json'
 
-# ============= DATA MANAGEMENT =============
-@st.cache_resource
-def load_farm_data():
-    """Load or create farm data"""
-    if os.path.exists('farm_data.json'):
-        with open('farm_data.json', 'r', encoding='utf-8') as f:
-            return json.load(f)
-    else:
-        return {}
-
-def save_farm_data(data):
-    """Save farm data to JSON"""
-    with open('farm_data.json', 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-
-@st.cache_resource
-def load_drug_program():
-    """Load drug program"""
-    if os.path.exists('drug_program.json'):
-        with open('drug_program.json', 'r', encoding='utf-8') as f:
-            return json.load(f)
+def load_json(file_path):
+    if os.path.exists(file_path):
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except:
+            return {}
     return {}
 
-# ============= INITIALIZE SESSION STATE =============
-def init_session_state():
-    if 'farm_data' not in st.session_state:
-        st.session_state.farm_data = load_farm_data()
-    
-    if 'drug_program' not in st.session_state:
-        st.session_state.drug_program = load_drug_program()
-    
-    if 'chat_history' not in st.session_state:
-        st.session_state.chat_history = []
+def save_json(data, file_path):
+    with open(file_path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
 
-init_session_state()
+# Initialize data into session state
+if 'data' not in st.session_state:
+    st.session_state.data = load_json(DATA_FILE)
+if 'banvit_data' not in st.session_state:
+    st.session_state.banvit_data = load_json(BANVIT_FILE)
 
-# ============= HELPER FUNCTIONS =============
+# Initialize data structure if empty
+if not st.session_state.data or 'settings' not in st.session_state.data:
+    st.session_state.data = {
+        "settings": {
+            "farm_name": "Cambel Ciftligi",
+            "start_date": "2026-02-14",
+            "target_slaughter_date": "2026-03-27",
+            "houses": {
+                f"Kümes {i}": {"chick_count": 10836 if i > 1 else 10248, "silo_capacity": 20.0} for i in range(1, 7)
+            },
+            "water_tank_capacity": 1000,
+            "feed_transition": {"chick_to_grower": 14, "grower_to_finisher": 28},
+            "feed_order_rules": [9, 18, 27, 36],
+            "min_feed_days": 2,
+            "order_lead_time": 1,
+            "max_feed_limit": 165,
+            "feed_stale_days": 7,
+            "withdrawal_periods": {"Neomisin": 5, "Tilosin": 7, "Doksisiklin": 5, "Kolistin": 2}
+        },
+        "daily_data": {},
+        "feed_invoices": [],
+        "drug_inventory": {},
+        "drug_program": {
+            "6": {"sabah": "Neomisin Sülfat", "aksam": "Hepato + Vitamin C", "not": "Tedavi başlangıcı"},
+            "7": {"sabah": "Neomisin Sülfat", "aksam": "Hepato + Vitamin C", "not": "Tedavi 2. gün"},
+            "8": {"sabah": "Neomisin Sülfat", "aksam": "Hepato + Vitamin C", "not": "Tedavi 3. gün"},
+            "9": {"sabah": "Neomisin Sülfat", "aksam": "Hepato + Vitamin C", "not": "Tedavi son gün"}
+        },
+        "ai_knowledge_base": {"files": [], "observations": {}, "weekly_notes": {}},
+        "chat_history": []
+    }
+    save_json(st.session_state.data, DATA_FILE)
+
+# --- CORE CALCULATIONS ---
 def get_current_day():
-    """Calculate current day based on start date"""
-    farm_data = st.session_state.farm_data
-    if not farm_data or 'settings' not in farm_data:
+    try:
+        start_dt = datetime.strptime(st.session_state.data['settings']['start_date'], '%Y-%m-%d')
+        day = (datetime.now() - start_dt).days + 1
+        return max(1, min(42, day))
+    except:
         return 1
+
+def calculate_metrics():
+    d = st.session_state.data
+    current_day = get_current_day()
+    total_initial = sum(h['chick_count'] for h in d['settings']['houses'].values() if h['chick_count'] > 0)
     
-    start_date = datetime.strptime(farm_data['settings']['start_date'], '%Y-%m-%d')
-    current_date = datetime.now()
-    days_passed = (current_date - start_date).days + 1
-    return min(days_passed, 42)
+    total_deaths = 0
+    latest_weights = {}
+    
+    sorted_days = sorted([int(k) for k in d['daily_data'].keys()])
+    for day_int in sorted_days:
+        day_str = str(day_int)
+        day_info = d['daily_data'][day_str]
+        total_deaths += sum(day_info.get('deaths', {}).values())
+        for house, w in day_info.get('weight', {}).items():
+            if w > 0: latest_weights[house] = w
 
-def get_live_chicken_count(day, deaths_data):
-    """Calculate live chicken count"""
-    total_deaths = sum(deaths_data.values())
-    initial_count = 42756
-    return initial_count - total_deaths
+    current_live = total_initial - total_deaths
+    avg_weight = sum(latest_weights.values()) / len(latest_weights) if latest_weights else 0
+    
+    total_received = sum(inv['amount'] for inv in d['feed_invoices'])
+    latest_day_str = str(sorted_days[-1]) if sorted_days else "0"
+    total_silo_rem = sum(d['daily_data'].get(latest_day_str, {}).get('silo_remaining', {}).values())
+    net_feed = total_received - total_silo_rem
+    
+    total_biomass_kg = (current_live * avg_weight) / 1000 if avg_weight > 0 else 0
+    fcr = net_feed / total_biomass_kg if total_biomass_kg > 0 else 0
+    
+    return {
+        "day": current_day,
+        "initial": total_initial,
+        "live": current_live,
+        "deaths": total_deaths,
+        "mortalite": (total_deaths / total_initial * 100) if total_initial > 0 else 0,
+        "weight": avg_weight,
+        "fcr": fcr,
+        "silo": total_silo_rem,
+        "net_feed": net_feed
+    }
 
-# ============= PAGE: DASHBOARD =============
-def page_dashboard():
+m = calculate_metrics()
+
+# --- SIDEBAR NAVIGATION ---
+st.sidebar.title("Murat Özkan Kümes")
+st.sidebar.markdown(f"**Gün:** {m['day']} | **Canlı:** {m['live']}")
+
+menu = st.sidebar.radio("Menü", [
+    "📊 Dashboard", "⚙️ Ayarlar", "📝 Günlük Veriler", "🚚 Yem Takibi", 
+    "🧮 FCR Hesaplamaları", "💊 İlaç Programı", "🏥 AI Bilgi Bankası", 
+    "📋 İlaç Envanteri", "📈 Durum Analizi", "💬 Sohbet"
+])
+
+# --- PAGE: DASHBOARD ---
+if menu == "📊 Dashboard":
     st.title("Dashboard")
     
-    farm_data = st.session_state.farm_data
-    if not farm_data or 'settings' not in farm_data:
-        st.error("Çiftlik verisi yüklenmedi. Lütfen Ayarlar sayfasını kontrol edin.")
-        return
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Canlı Hayvan", f"{m['live']}")
+    c2.metric("Mortalite (%)", f"{m['mortalite']:.2f}%")
+    c3.metric("Ort. Ağırlık (g)", f"{m['weight']:.1f}g")
+    c4.metric("Çiftlik FCR", f"{m['fcr']:.3f}")
     
-    current_day = get_current_day()
-    
-    # KPI Cards
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        st.metric("Çiftlik Adı", farm_data['settings']['farm_name'])
-    with col2:
-        st.metric("Gün", current_day)
-    with col3:
-        st.metric("Başlangıç Tarihi", farm_data['settings']['start_date'])
-    with col4:
-        st.metric("Tahmini Kesim", "27.03.2026")
-    
-    st.markdown("---")
-    
-    # Kümes Özeti
     st.subheader("Kümes Özeti")
-    
-    if str(current_day) in farm_data.get('daily_data', {}):
-        current_data = farm_data['daily_data'][str(current_day)]
-        
-        kumes_data = []
-        for kumes_id in ["1", "2", "3", "4"]:
-            deaths = current_data.get('deaths', {}).get(kumes_id, 0)
-            weight = current_data.get('weight', {}).get(kumes_id, 0)
-            capacity = farm_data['settings']['kumes'][kumes_id]['capacity']
+    house_data = []
+    for h_name, h_info in st.session_state.data['settings']['houses'].items():
+        if h_info['chick_count'] > 0:
+            h_deaths = 0
+            h_weight = 0
+            for d_info in st.session_state.data['daily_data'].values():
+                h_deaths += d_info.get('deaths', {}).get(h_name, 0)
+                if d_info.get('weight', {}).get(h_name, 0) > 0:
+                    h_weight = d_info['weight'][h_name]
             
-            kumes_data.append({
-                'Kümes': f'Kümes {kumes_id}',
-                'Kapasite': capacity,
-                'Ölüm': deaths,
-                'Canlı': capacity - deaths,
-                'Ağırlık (g)': weight
+            house_data.append({
+                "Kümes": h_name,
+                "Kapasite": h_info['chick_count'],
+                "Ölüm": h_deaths,
+                "Canlı": h_info['chick_count'] - h_deaths,
+                "Ağırlık (g)": h_weight
             })
-        
-        df = pd.DataFrame(kumes_data)
-        st.dataframe(df, use_container_width=True)
-    
-    st.markdown("---")
-    
-    # Performance Metrics
-    st.subheader("Performans Metrikleri")
-    
-    if str(current_day) in farm_data.get('daily_data', {}):
-        current_data = farm_data['daily_data'][str(current_day)]
-        
-        # Total deaths
-        total_deaths = sum(current_data.get('deaths', {}).values())
-        mortality_rate = (total_deaths / 42756 * 100) if 42756 > 0 else 0
-        
-        # Average weight
-        weights = [w for w in current_data.get('weight', {}).values() if w > 0]
-        avg_weight = sum(weights) / len(weights) if weights else 0
-        
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.metric("Toplam Canlı Hayvan", 42756 - total_deaths)
-        with col2:
-            st.metric("Mortalite Oranı (%)", f"{mortality_rate:.2f}%")
-        with col3:
-            st.metric("Ortalama Ağırlık (g)", f"{avg_weight:.0f}")
+    st.table(pd.DataFrame(house_data))
 
-# ============= PAGE: AYARLAR =============
-def page_ayarlar():
+# --- PAGE: AYARLAR ---
+elif menu == "⚙️ Ayarlar":
     st.title("Sistem Ayarları")
-    
-    farm_data = st.session_state.farm_data
-    settings = farm_data.get('settings', {})
-    
-    st.subheader("Çiftlik Bilgileri")
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        farm_name = st.text_input("Çiftlik Adı", value=settings.get('farm_name', 'Cambel Ciftligi'))
-    with col2:
-        start_date = st.date_input("Başlangıç Tarihi", value=datetime.strptime(settings.get('start_date', '2026-02-14'), '%Y-%m-%d'))
-    
-    st.subheader("Kümes Kapasiteleri")
-    
-    for kumes_id in ["1", "2", "3", "4"]:
-        col1, col2 = st.columns(2)
-        with col1:
-            capacity = st.number_input(
-                f"Kümes {kumes_id} Civciv Sayısı",
-                value=settings.get('kumes', {}).get(kumes_id, {}).get('capacity', 10836),
-                key=f"capacity_{kumes_id}"
-            )
-        with col2:
-            silo_cap = st.number_input(
-                f"Kümes {kumes_id} Silo Kapasitesi (Ton)",
-                value=settings.get('kumes', {}).get(kumes_id, {}).get('silo_capacity', 5.0),
-                key=f"silo_{kumes_id}"
-            )
-    
-    if st.button("Ayarları Kaydet", type="primary"):
-        farm_data['settings']['farm_name'] = farm_name
-        farm_data['settings']['start_date'] = start_date.strftime('%Y-%m-%d')
+    with st.form("settings"):
+        st.session_state.data['settings']['farm_name'] = st.text_input("Çiftlik Adı", st.session_state.data['settings']['farm_name'])
+        st.session_state.data['settings']['start_date'] = st.text_input("Başlangıç Tarihi (YYYY-MM-DD)", st.session_state.data['settings']['start_date'])
         
-        for kumes_id in ["1", "2", "3", "4"]:
-            farm_data['settings']['kumes'][kumes_id]['capacity'] = st.session_state[f"capacity_{kumes_id}"]
-            farm_data['settings']['kumes'][kumes_id]['silo_capacity'] = st.session_state[f"silo_{kumes_id}"]
+        st.subheader("Kümes Bilgileri")
+        cols = st.columns(3)
+        for i, (h_name, h_info) in enumerate(st.session_state.data['settings']['houses'].items()):
+            with cols[i % 3]:
+                h_info['chick_count'] = st.number_input(f"{h_name} Civciv", value=h_info['chick_count'])
+                h_info['silo_capacity'] = st.number_input(f"{h_name} Silo (Ton)", value=h_info['silo_capacity'])
         
-        save_farm_data(farm_data)
-        st.success("Ayarlar kaydedildi!")
-
-# ============= PAGE: GÜNLÜK VERİLER =============
-def page_gunluk_veriler():
-    st.title("Günlük Veri Girişi")
-    
-    farm_data = st.session_state.farm_data
-    current_day = get_current_day()
-    
-    day = st.slider("Gün Seç", 1, 42, current_day)
-    
-    st.subheader(f"Gün {day} - Veri Girişi")
-    
-    if str(day) not in farm_data['daily_data']:
-        farm_data['daily_data'][str(day)] = {
-            "date": "",
-            "deaths": {"1": 0, "2": 0, "3": 0, "4": 0},
-            "weight": {"1": 0, "2": 0, "3": 0, "4": 0},
-            "water_consumption": {"1": 0, "2": 0, "3": 0, "4": 0},
-            "feed_consumption": {"1": 0, "2": 0, "3": 0, "4": 0},
-            "silo_remaining": {"1": 0, "2": 0, "3": 0, "4": 0},
-            "notes": ""
-        }
-    
-    day_data = farm_data['daily_data'][str(day)]
-    
-    # Date input
-    date_input = st.date_input("Tarih", value=datetime.now())
-    day_data['date'] = date_input.strftime('%Y-%m-%d')
-    
-    # Deaths and Weight
-    st.subheader("Ölüm ve Ağırlık Verileri")
-    
-    col1, col2, col3, col4 = st.columns(4)
-    
-    for idx, kumes_id in enumerate(["1", "2", "3", "4"]):
-        with [col1, col2, col3, col4][idx]:
-            st.write(f"**Kümes {kumes_id}**")
-            
-            deaths = st.number_input(
-                f"K{kumes_id} Ölüm",
-                value=int(day_data['deaths'].get(kumes_id, 0)),
-                min_value=0,
-                key=f"deaths_{day}_{kumes_id}"
-            )
-            day_data['deaths'][kumes_id] = int(deaths)
-            
-            weight = st.number_input(
-                f"K{kumes_id} Ağırlık (g)",
-                value=int(day_data['weight'].get(kumes_id, 0)),
-                min_value=0,
-                step=1,
-                key=f"weight_{day}_{kumes_id}"
-            )
-            day_data['weight'][kumes_id] = int(weight)
-    
-    # Water and Feed
-    st.subheader("Su ve Yem Verileri")
-    
-    col1, col2, col3, col4 = st.columns(4)
-    
-    for idx, kumes_id in enumerate(["1", "2", "3", "4"]):
-        with [col1, col2, col3, col4][idx]:
-            water = st.number_input(
-                f"K{kumes_id} Su (L)",
-                value=float(day_data['water_consumption'].get(kumes_id, 0)),
-                min_value=0.0,
-                key=f"water_{day}_{kumes_id}"
-            )
-            day_data['water_consumption'][kumes_id] = float(water)
-            
-            feed = st.number_input(
-                f"K{kumes_id} Yem (kg)",
-                value=float(day_data['feed_consumption'].get(kumes_id, 0)),
-                min_value=0.0,
-                step=0.1,
-                key=f"feed_{day}_{kumes_id}"
-            )
-            day_data['feed_consumption'][kumes_id] = float(feed)
-            
-            silo = st.number_input(
-                f"K{kumes_id} Silo Kalan (kg)",
-                value=float(day_data['silo_remaining'].get(kumes_id, 0)),
-                min_value=0.0,
-                step=10.0,
-                key=f"silo_{day}_{kumes_id}"
-            )
-            day_data['silo_remaining'][kumes_id] = float(silo)
-    
-    # Notes
-    st.subheader("Notlar")
-    notes = st.text_area("Gün Notları", value=day_data.get('notes', ''), height=100)
-    day_data['notes'] = notes
-    
-    # Save button
-    if st.button("Günlük Verileri Kaydet", type="primary"):
-        save_farm_data(farm_data)
-        st.success(f"Gün {day} verileri kaydedildi!")
-        st.rerun()
-
-# ============= PAGE: YEM TAKIBI =============
-def page_yem_takibi():
-    st.title("Yem Takibi ve Siparişi")
-    
-    farm_data = st.session_state.farm_data
-    
-    st.subheader("Yem Geliş Kayıtları")
-    
-    # Add new feed delivery
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        delivery_date = st.date_input("Teslimat Tarihi", value=datetime.now(), key="feed_date")
-    with col2:
-        feed_type = st.selectbox("Yem Türü", ["Starter", "Grower", "Finisher"], key="feed_type")
-    with col3:
-        quantity = st.number_input("Miktar (kg)", min_value=0, step=100, key="feed_qty")
-    with col4:
-        supplier = st.text_input("Tedarikçi", value="", key="feed_supplier")
-    
-    if st.button("Yem Geliş Kaydet", type="primary"):
-        farm_data['feed_deliveries'].append({
-            'date': delivery_date.strftime('%Y-%m-%d'),
-            'type': feed_type,
-            'quantity': quantity,
-            'supplier': supplier
-        })
-        save_farm_data(farm_data)
-        st.success("Yem geliş kaydedildi!")
-    
-    # Display feed deliveries
-    if farm_data.get('feed_deliveries'):
-        st.subheader("Geçmiş Yem Geliş Kayıtları")
-        df = pd.DataFrame(farm_data['feed_deliveries'])
-        st.dataframe(df, use_container_width=True)
-    
-    st.markdown("---")
-    
-    # Feed order alerts
-    st.subheader("Yem Siparişi Uyarıları")
-    
-    current_day = get_current_day()
-    if str(current_day) in farm_data.get('daily_data', {}):
-        current_data = farm_data['daily_data'][str(current_day)]
-        silo_status = farm_data.get('silo_status', {})
-        
-        # Calculate daily consumption
-        daily_consumption = {}
-        for kumes_id in ["1", "2", "3", "4"]:
-            daily_consumption[kumes_id] = current_data.get('feed_consumption', {}).get(kumes_id, 0)
-        
-        # Get alerts
-        alerts = calculate_feed_order_alert(silo_status, daily_consumption, 42 - current_day)
-        
-        for kumes_id in ["1", "2", "3", "4"]:
-            alert = alerts[kumes_id]
-            
-            if alert['status'] == 'UYARI':
-                st.warning(f"🚨 {alert['message']}")
-                st.info(f"Mevcut Silo: {alert['current_silo']} kg | 3 Günlük İhtiyaç: {alert['three_day_need']:.0f} kg")
-            else:
-                st.success(f"✓ {alert['message']}")
-
-# ============= PAGE: FCR HESAPLAMALARI =============
-def page_fcr_hesaplamalari():
-    st.title("FCR Hesaplamaları ve Performans")
-    
-    farm_data = st.session_state.farm_data
-    current_day = get_current_day()
-    
-    day = st.slider("Gün Seç", 1, 42, current_day, key="fcr_day")
-    
-    if str(day) in farm_data.get('daily_data', {}):
-        day_data = farm_data['daily_data'][str(day)]
-        
-        # Calculate FCR
-        fcr_results = calculate_fcr(day_data, farm_data['settings'])
-        
-        st.subheader(f"Gün {day} - FCR Analizi")
-        
-        fcr_data = []
-        for kumes_id in ["1", "2", "3", "4"]:
-            result = fcr_results[kumes_id]
-            fcr_data.append({
-                'Kümes': f'Kümes {kumes_id}',
-                'Tüketilen Yem (kg)': result['consumed_feed'],
-                'Canlı Ağırlık (kg)': result['live_weight'] / 1000,
-                'FCR': result['fcr']
-            })
-        
-        df = pd.DataFrame(fcr_data)
-        st.dataframe(df, use_container_width=True)
-        
-        # Calculate mortality
-        st.subheader("Mortalite Analizi")
-        
-        mortality_results = calculate_mortality_rate(day_data, farm_data['settings'])
-        
-        mortality_data = []
-        for kumes_id in ["1", "2", "3", "4"]:
-            result = mortality_results[kumes_id]
-            mortality_data.append({
-                'Kümes': f'Kümes {kumes_id}',
-                'Ölüm Sayısı': result['deaths'],
-                'Kapasite': result['capacity'],
-                'Mortalite (%)': result['mortality_rate']
-            })
-        
-        df_mortality = pd.DataFrame(mortality_data)
-        st.dataframe(df_mortality, use_container_width=True)
-    else:
-        st.info(f"Gün {day} için veri girilmemiş.")
-
-# ============= PAGE: İLAÇ PROGRAMI =============
-def page_ilac_programi():
-    st.title("İlaç Programı")
-    
-    drug_program = st.session_state.drug_program
-    current_day = get_current_day()
-    
-    day = st.slider("Gün Seç", 6, 42, current_day, key="drug_day")
-    
-    if str(day) in drug_program:
-        program = drug_program[str(day)]
-        
-        st.header(f"Gün {day} - {program.get('tarih', '')}")
-        
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.subheader("SABAH (08:00-14:00)")
-            st.success(program.get('sabah', 'Bilgi yok'))
-        
-        with col2:
-            st.subheader("AKŞAM (16:00-22:00)")
-            st.info(program.get('aksam', 'Bilgi yok'))
-        
-        st.markdown("---")
-        st.subheader("Veteriner Hekim Notu")
-        st.warning(program.get('not', 'Not yok'))
-    else:
-        st.error(f"Gün {day} için program bilgisi bulunamadi. Program 6-42. gunler arasinda gecerlidir.")
-
-# ============= PAGE: SOHBET =============
-def page_sohbet():
-    st.title("AI Asistan Sohbeti")
-    
-    st.info("AI Asistan ile canli sohbet")
-    
-    # Display chat history
-    for msg in st.session_state.chat_history:
-        if msg['role'] == 'user':
-            st.markdown(f"**Siz:** {msg['content']}")
-        else:
-            st.markdown(f"**AI:** {msg['content']}")
-    
-    st.markdown("---")
-    
-    # Input
-    user_input = st.text_input("Mesajiniz:", key="chat_input")
-    
-    if st.button("Gonder"):
-        if user_input:
-            st.session_state.chat_history.append({'role': 'user', 'content': user_input})
-            
-            # Simulate AI response
-            ai_response = f"Mesajiniz alindi: '{user_input}'. Size yardimci olmak icin buradayim."
-            st.session_state.chat_history.append({'role': 'assistant', 'content': ai_response})
-            
+        if st.form_submit_button("Ayarları Güncelle"):
+            save_json(st.session_state.data, DATA_FILE)
+            st.success("Ayarlar kaydedildi!")
             st.rerun()
 
-# ============= MAIN APP =============
-def main():
-    st.sidebar.title("Murat Özkan Kümes Takip Sistemi")
+# --- PAGE: GÜNLÜK VERİLER ---
+elif menu == "📝 Günlük Veriler":
+    st.title("Günlük Veri Girişi")
+    day_sel = st.number_input("Gün", 1, 42, m['day'])
+    ds = str(day_sel)
     
-    sayfa = st.sidebar.radio(
-        "Sayfalar",
-        [
-            "Dashboard",
-            "Ayarlar",
-            "Günlük Veriler",
-            "Yem Takibi",
-            "FCR Hesaplamaları",
-            "İlaç Programı",
-            "Sohbet"
-        ]
-    )
+    if ds not in st.session_state.data['daily_data']:
+        st.session_state.data['daily_data'][ds] = {
+            "deaths": {h: 0 for h in st.session_state.data['settings']['houses']},
+            "weight": {h: 0 for h in st.session_state.data['settings']['houses']},
+            "silo_remaining": {h: 0 for h in st.session_state.data['settings']['houses']},
+            "water": {h: 0 for h in st.session_state.data['settings']['houses']}
+        }
     
-    if sayfa == "Dashboard":
-        page_dashboard()
-    elif sayfa == "Ayarlar":
-        page_ayarlar()
-    elif sayfa == "Günlük Veriler":
-        page_gunluk_veriler()
-    elif sayfa == "Yem Takibi":
-        page_yem_takibi()
-    elif sayfa == "FCR Hesaplamaları":
-        page_fcr_hesaplamalari()
-    elif sayfa == "İlaç Programı":
-        page_ilac_programi()
-    elif sayfa == "Sohbet":
-        page_sohbet()
+    with st.form("daily_form"):
+        for h_name, h_info in st.session_state.data['settings']['houses'].items():
+            if h_info['chick_count'] > 0:
+                st.write(f"### {h_name}")
+                c1, c2, c3, c4 = st.columns(4)
+                st.session_state.data['daily_data'][ds]['deaths'][h_name] = c1.number_input(f"Ölüm", value=st.session_state.data['daily_data'][ds]['deaths'].get(h_name, 0), key=f"d_{ds}_{h_name}")
+                st.session_state.data['daily_data'][ds]['weight'][h_name] = c2.number_input(f"Ağırlık (g)", value=st.session_state.data['daily_data'][ds]['weight'].get(h_name, 0), key=f"w_{ds}_{h_name}")
+                st.session_state.data['daily_data'][ds]['silo_remaining'][h_name] = c3.number_input(f"Silo (kg)", value=st.session_state.data['daily_data'][ds]['silo_remaining'].get(h_name, 0), key=f"s_{ds}_{h_name}")
+                st.session_state.data['daily_data'][ds]['water'][h_name] = c4.number_input(f"Su (L)", value=st.session_state.data['daily_data'][ds]['water'].get(h_name, 0), key=f"wa_{ds}_{h_name}")
+        
+        if st.form_submit_button("Verileri Kaydet"):
+            save_json(st.session_state.data, DATA_FILE)
+            st.success(f"Gün {day_sel} verileri kaydedildi!")
+            st.rerun()
 
-if __name__ == "__main__":
-    main()
+# --- PAGE: YEM TAKIBI ---
+elif menu == "🚚 Yem Takibi":
+    st.title("Yem Takibi ve Sipariş")
+    with st.form("invoice"):
+        st.subheader("Yeni Yem İrsaliyesi")
+        c1, c2, c3 = st.columns(3)
+        date = c1.date_input("Tarih")
+        typ = c2.selectbox("Tip", ["Civciv", "Büyütme", "Bitirme"])
+        amt = c3.number_input("Miktar (kg)", min_value=0)
+        if st.form_submit_button("İrsaliye Ekle"):
+            st.session_state.data['feed_invoices'].append({"date": str(date), "type": typ, "amount": amt})
+            save_json(st.session_state.data, DATA_FILE)
+            st.success("İrsaliye eklendi!")
+            st.rerun()
+    
+    st.subheader("Sipariş Uyarıları")
+    for h_name, h_info in st.session_state.data['settings']['houses'].items():
+        if h_info['chick_count'] > 0:
+            latest_day = str(max([int(k) for k in st.session_state.data['daily_data'].keys()] + [0]))
+            rem = st.session_state.data['daily_data'].get(latest_day, {}).get('silo_remaining', {}).get(h_name, 0)
+            target_feed = st.session_state.banvit_data.get(str(m['day']), {}).get('yem_tüketimi', 100)
+            daily_need = (target_feed * h_info['chick_count']) / 1000
+            days_left = rem / daily_need if daily_need > 0 else 10
+            
+            if days_left < 2:
+                st.error(f"🚨 {h_name}: KRİTİK! {days_left:.1f} gün yem kaldı. Hemen sipariş ver!")
+            elif days_left < 4:
+                st.warning(f"⚠️ {h_name}: DİKKAT! {days_left:.1f} gün yem kaldı.")
+            else:
+                st.success(f"✅ {h_name}: Yeterli ({days_left:.1f} gün)")
+
+# --- PAGE: SOHBET ---
+elif menu == "💬 Sohbet":
+    st.title("AI Asistan")
+    for msg in st.session_state.data['chat_history']:
+        with st.chat_message(msg['role']): st.write(msg['content'])
+    
+    if prompt := st.chat_input("Sorunuzu yazın..."):
+        st.session_state.data['chat_history'].append({"role": "user", "content": prompt})
+        with st.chat_message("user"): st.write(prompt)
+        
+        # Simple Logic for AI response
+        resp = f"Merhaba Yağız, mevcut durumunu analiz ettim. Gün: {m['day']}, FCR: {m['fcr']:.3f}. '{prompt}' talebinle ilgili yardımcı oluyorum."
+        st.session_state.data['chat_history'].append({"role": "assistant", "content": resp})
+        with st.chat_message("assistant"): st.write(resp)
+        save_json(st.session_state.data, DATA_FILE)
+
+# --- FALLBACK ---
+else:
+    st.title(menu)
+    st.info("Bu sayfa güncelleniyor...")
