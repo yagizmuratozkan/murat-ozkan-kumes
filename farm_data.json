@@ -1,32 +1,38 @@
 {
+  "metadata": {
+    "version": "2.0",
+    "created": "2026-02-21 22:37:35.077994",
+    "last_updated": "2026-02-21 22:37:35.078031",
+    "transaction_log": []
+  },
   "settings": {
-    "farm_name": "Cambel Ciftligi",
+    "farm_name": "Çambel Çiftliği",
     "start_date": "2026-02-14",
     "target_slaughter_date": "2026-03-27",
     "houses": {
-      "K\u00fcmes 1": {
+      "Kümes 1": {
         "chick_count": 10248,
         "silo_capacity": 20.0
       },
-      "K\u00fcmes 2": {
+      "Kümes 2": {
         "chick_count": 10836,
         "silo_capacity": 20.0
       },
-      "K\u00fcmes 3": {
+      "Kümes 3": {
         "chick_count": 10836,
         "silo_capacity": 20.0
       },
-      "K\u00fcmes 4": {
+      "Kümes 4": {
         "chick_count": 10836,
         "silo_capacity": 20.0
       },
-      "K\u00fcmes 5": {
-        "chick_count": 0,
-        "silo_capacity": 0.0
+      "Kümes 5": {
+        "chick_count": 10836,
+        "silo_capacity": 20.0
       },
-      "K\u00fcmes 6": {
-        "chick_count": 0,
-        "silo_capacity": 0.0
+      "Kümes 6": {
+        "chick_count": 10836,
+        "silo_capacity": 20.0
       }
     },
     "water_tank_capacity": 1000,
@@ -49,68 +55,350 @@
       "Tilosin": 7,
       "Doksisiklin": 5,
       "Kolistin": 2
-    }
+    },
+    "death_thresholds": {
+      "1-7": 1.0,
+      "8-14": 0.5,
+      "15-21": 0.5,
+      "22-28": 0.5,
+      "29-35": 0.5,
+      "36-42": 0.5
+    },
+    "feed_costs": {
+      "Civciv": 2.5,
+      "Büyütme": 2.0,
+      "Bitirme": 1.8
+    },
+    "drug_costs": {
+      "Neomisin": 150,
+      "Tilosin": 200,
+      "Hepato": 100
+    },
+    "electricity_cost_per_kwh": 2.5,
+    "labor_cost_per_day": 500
   },
   "daily_data": {},
   "feed_invoices": [],
+  "financial_data": {
+    "total_revenue": 0,
+    "total_expenses": 0,
+    "profit_margin": 0
+  },
   "drug_inventory": {
-    "Neomisin S\u00fclfat": {
+    "Neomisin Sülfat": {
       "dose": 100,
-      "duration": 4,
+      "unit": "g/1000L",
       "withdrawal": 5,
-      "warnings": "Kolistin ile uyumlu"
+      "stock": 5000,
+      "cost": 150
     },
     "Tilosin Tartrat": {
       "dose": 500,
-      "duration": 3,
+      "unit": "g/1000L",
       "withdrawal": 7,
-      "warnings": "Doksisiklin ile uyumlu"
+      "stock": 3000,
+      "cost": 200
     },
     "Hepato": {
       "dose": 1000,
-      "duration": 5,
+      "unit": "ml/1000L",
       "withdrawal": 0,
-      "warnings": "T\u00fcm ila\u00e7lar ile uyumlu"
+      "stock": 10000,
+      "cost": 100
     },
-    "Vitamin C + Elektrolit": {
-      "dose": 500,
-      "duration": 5,
+    "Vitamin C": {
+      "dose": 250,
+      "unit": "g/1000L",
       "withdrawal": 0,
-      "warnings": "Segropass ile uyumlu"
+      "stock": 5000,
+      "cost": 50
     },
-    "Sodyum B\u00fctirat": {
-      "dose": 500,
-      "duration": 10,
+    "Probiyotik": {
+      "dose": 200,
+      "unit": "g/1000L",
       "withdrawal": 0,
-      "warnings": "Avicid ile uyumlu"
+      "stock": 8000,
+      "cost": 80
+    },
+    "Sodyum Bütirat": {
+      "dose": 300,
+      "unit": "g/1000L",
+      "withdrawal": 0,
+      "stock": 6000,
+      "cost": 120
+    },
+    "Betain": {
+      "dose": 500,
+      "unit": "g/1000L",
+      "withdrawal": 0,
+      "stock": 4000,
+      "cost": 90
+    },
+    "Doksisiklin": {
+      "dose": 200,
+      "unit": "g/1000L",
+      "withdrawal": 5,
+      "stock": 3000,
+      "cost": 180
+    },
+    "Kolistin": {
+      "dose": 150,
+      "unit": "g/1000L",
+      "withdrawal": 2,
+      "stock": 2000,
+      "cost": 160
+    },
+    "Wellpro": {
+      "dose": 100,
+      "unit": "g/1000L",
+      "withdrawal": 0,
+      "stock": 5000,
+      "cost": 70
+    },
+    "Avicid": {
+      "dose": 250,
+      "unit": "g/1000L",
+      "withdrawal": 0,
+      "stock": 4000,
+      "cost": 85
     }
   },
   "drug_program": {
+    "1": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "2": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "3": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "4": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "5": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
     "6": {
-      "sabah": "Neomisin S\u00fclfat",
+      "sabah": "Neomisin Sülfat",
       "aksam": "Hepato + Vitamin C",
-      "not": "Tedavi ba\u015flang\u0131c\u0131"
+      "not": "Omfalitis tedavisi"
     },
     "7": {
-      "sabah": "Neomisin S\u00fclfat",
+      "sabah": "Neomisin Sülfat",
       "aksam": "Hepato + Vitamin C",
-      "not": "Tedavi 2. g\u00fcn"
+      "not": "Omfalitis tedavisi"
     },
     "8": {
-      "sabah": "Neomisin S\u00fclfat",
+      "sabah": "Neomisin Sülfat",
       "aksam": "Hepato + Vitamin C",
-      "not": "Tedavi 3. g\u00fcn"
+      "not": "Omfalitis tedavisi"
     },
     "9": {
-      "sabah": "Neomisin S\u00fclfat",
+      "sabah": "Neomisin Sülfat",
       "aksam": "Hepato + Vitamin C",
-      "not": "Tedavi son g\u00fcn"
+      "not": "Omfalitis tedavisi"
+    },
+    "10": {
+      "sabah": "Probiyotik",
+      "aksam": "Probiyotik",
+      "not": "Flora onarımı"
+    },
+    "11": {
+      "sabah": "Probiyotik",
+      "aksam": "Probiyotik",
+      "not": "Flora onarımı"
+    },
+    "12": {
+      "sabah": "Probiyotik",
+      "aksam": "Probiyotik",
+      "not": "Flora onarımı"
+    },
+    "13": {
+      "sabah": "Sodyum Bütirat",
+      "aksam": "Betain",
+      "not": "Performans artışı"
+    },
+    "14": {
+      "sabah": "Sodyum Bütirat",
+      "aksam": "Betain",
+      "not": "Performans artışı"
+    },
+    "15": {
+      "sabah": "Sodyum Bütirat",
+      "aksam": "Betain",
+      "not": "Performans artışı"
+    },
+    "16": {
+      "sabah": "Sodyum Bütirat",
+      "aksam": "Betain",
+      "not": "Performans artışı"
+    },
+    "17": {
+      "sabah": "Sodyum Bütirat",
+      "aksam": "Betain",
+      "not": "Performans artışı"
+    },
+    "18": {
+      "sabah": "Tilosin Tartrat",
+      "aksam": "Vitamin C",
+      "not": "Solunum desteği"
+    },
+    "19": {
+      "sabah": "Tilosin Tartrat",
+      "aksam": "Vitamin C",
+      "not": "Solunum desteği"
+    },
+    "20": {
+      "sabah": "Tilosin Tartrat",
+      "aksam": "Vitamin C",
+      "not": "Solunum desteği"
+    },
+    "21": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "22": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "23": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "24": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "25": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "26": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "27": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "28": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "29": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "30": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "31": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "32": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "33": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "34": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "35": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "36": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "37": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "38": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "39": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "40": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "41": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
+    },
+    "42": {
+      "sabah": "",
+      "aksam": "",
+      "not": ""
     }
+  },
+  "drug_compatibility_matrix": {
+    "Neomisin": [
+      "Hepato",
+      "Vitamin C"
+    ],
+    "Tilosin": [
+      "Doksisiklin"
+    ],
+    "Probiyotik": [
+      "Sodyum Bütirat",
+      "Betain"
+    ],
+    "Wellpro": [
+      "Avicid"
+    ]
   },
   "ai_knowledge_base": {
     "files": [],
     "observations": {},
-    "weekly_notes": {}
+    "weekly_notes": {},
+    "diagnostic_history": []
   },
-  "chat_history": []
+  "chat_history": [],
+  "fcr_projections": {},
+  "anomaly_alerts": [],
+  "performance_benchmarks": {}
 }
