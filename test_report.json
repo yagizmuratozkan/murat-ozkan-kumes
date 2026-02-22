@@ -1,0 +1,14 @@
+{
+  "test_date": "2026-02-21T23:11:43.569442",
+  "project": "Murat \u00d6zkan K\u00fcmes \u0130\u015fletim Sistemi",
+  "tests": {
+    "farm_data": "PASS",
+    "banvit_data": "PASS",
+    "drug_program": "PASS",
+    "streamlit_app.py": "PASS",
+    "enhanced_chat.py": "PASS",
+    "feed_logistics.py": "PASS",
+    "dashboard_analytics.py": "PASS",
+    "requirements": "PASS"
+  }
+}
