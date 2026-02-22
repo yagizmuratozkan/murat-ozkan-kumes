@@ -101,6 +101,17 @@ if 'farm_data' not in st.session_state:
         st.error("farm_data.json yüklenemedi veya boş. Uygulama başlatılamıyor.")
         st.stop()
 
+    # Ensure essential keys exist in settings after loading
+    if 'settings' not in st.session_state.farm_data:
+        st.session_state.farm_data['settings'] = {}
+    if 'houses' not in st.session_state.farm_data['settings']:
+        st.session_state.farm_data['settings']['houses'] = {}
+    if 'feed_transition' not in st.session_state.farm_data['settings']:
+        st.session_state.farm_data['settings']['feed_transition'] = {
+            'chick_to_grower': 14,
+            'grower_to_finisher': 28
+        }
+
 if 'banvit_data' not in st.session_state:
     st.session_state.banvit_data = load_json(BANVIT_FILE)
     if not st.session_state.banvit_data:
@@ -242,134 +253,211 @@ def calculate_feed_days_remaining(current_day: int) -> Dict[str, float]:
                 days_remaining = 0
             
             result[house_name] = days_remaining
-    except Exception as e:
-        st.error(f"Yem gün hesabı hatası: {e}")
-    
-    return result
+            
+        return result
+    except:
+        return result
 
 def calculate_water_preparation(current_day: int) -> Tuple[float, float]:
-    """Sabah ve akşam su hazırlama miktarını hesapla (400-1000L arasında)"""
+    """Sabah ve akşam hazırlanması gereken su miktarını hesapla"""
     try:
         banvit_day = str(current_day)
         if banvit_day not in st.session_state.banvit_data:
-            return 400, 400
+            return 0, 0
         
-        daily_water_target = st.session_state.banvit_data[banvit_day].get('su_tüketimi', 100)
+        water_per_1000_birds = st.session_state.banvit_data[banvit_day].get('su_tüketimi', 300)
         total_live = calculate_total_live_birds(current_day)
-        total_daily_water = (daily_water_target * total_live) / 1000  # ml to liters
         
-        # Sabah ve akşam 50-50 bölüş
-        morning_water = (total_daily_water * 0.5)
-        evening_water = (total_daily_water * 0.5)
+        total_water = (total_live / 1000) * water_per_1000_birds
         
-        # Min/Max sınırları uygula
-        morning_water = max(400, min(1000, morning_water))
-        evening_water = max(400, min(1000, evening_water))
-        
-        return morning_water, evening_water
+        # Sabah %60, Akşam %40
+        return total_water * 0.6, total_water * 0.4
     except:
-        return 400, 400
+        return 0, 0
 
-def calculate_health_score(current_day: int) -> float:
-    """Sağlık puanı hesapla (0-100)"""
-    try:
-        death_rate = calculate_death_rate(current_day)
-        avg_weight = calculate_average_weight(current_day)
-        
-        # Ross hedef ağırlık
-        banvit_day = str(current_day)
-        if banvit_day in st.session_state.banvit_data:
-            target_weight = st.session_state.banvit_data[banvit_day].get('ross_ağırlık', 1000)
-        else:
-            target_weight = 1000
-        
-        # Sapma oranı
-        if target_weight > 0:
-            weight_deviation = ((avg_weight - target_weight) / target_weight) * 100
-        else:
-            weight_deviation = 0
-        
-        # Su tüketimi sapması
-        day_key = f"day_{current_day}"
-        total_water = 0
-        if day_key in st.session_state.farm_data['daily_data']:
-            day_data = st.session_state.farm_data['daily_data'][day_key]
-            for house_name in st.session_state.farm_data['settings']['houses'].keys():
-                if house_name in day_data and 'water_consumption' in day_data[house_name]:
-                    total_water += day_data[house_name]['water_consumption']
-        
-        target_water_consumption = st.session_state.banvit_data[banvit_day].get('su_tüketimi', 100) * calculate_total_live_birds(current_day) / 1000
-        water_deviation = 0
-        if target_water_consumption > 0:
-            water_deviation = ((total_water - target_water_consumption) / target_water_consumption) * 100
-
-        # FCR sapması
-        fcr = calculate_fcr(current_day)
-        target_fcr = st.session_state.banvit_data[banvit_day].get('fcr', 1.5)
-        fcr_deviation = 0
-        if target_fcr > 0:
-            fcr_deviation = ((fcr - target_fcr) / target_fcr) * 100
-
-        score = 100
-        # Ölüm oranı
-        if death_rate > 2:
-            score -= 30
-        elif death_rate > 1:
-            score -= 15
-        
-        # Ağırlık sapması
-        if weight_deviation < -10:
-            score -= 25
-        elif weight_deviation < -5:
-            score -= 10
-        
-        # FCR sapması
-        if fcr_deviation > 10:
-            score -= 20
-        elif fcr_deviation > 5:
-            score -= 10
-
-        # Su tüketimi sapması
-        if water_deviation < -15 or water_deviation > 15:
-            score -= 10
-        
-        return max(0, score)
-    except Exception as e:
-        st.error(f"Sağlık puanı hesaplama hatası: {e}")
-        return 50 # Default health score in case of error
+def get_drug_program_for_day(current_day: int) -> Dict:
+    """Belirli bir gün için ilaç programını döndürür"""
+    return st.session_state.drug_program.get(str(current_day), {})
 
 # ============ PAGE RENDERING FUNCTIONS ============
 def page_dashboard():
-    """Ana Dashboard Sayfası"""
     current_day = get_current_day()
-    render_dashboard(st.session_state.farm_data, st.session_state.banvit_data, current_day)
+    total_live_birds = calculate_total_live_birds(current_day)
+    avg_weight = calculate_average_weight(current_day)
+    fcr = calculate_fcr(current_day)
+    death_rate = calculate_death_rate(current_day)
+    render_dashboard(
+        st.session_state.farm_data,
+        st.session_state.banvit_data,
+        current_day,
+        total_live_birds,
+        avg_weight,
+        fcr,
+        death_rate
+    )
+
+def page_daily_entry():
+    st.title("📊 Günlük Veri Girişi")
+    current_day = get_current_day()
+    st.subheader(f"Bugün: {current_day}. Gün")
+
+    # Ensure daily_data for current day exists
+    st.session_state.farm_data.setdefault('daily_data', {}).setdefault(f'day_{current_day}', {})
+
+    for i in range(1, len(st.session_state.farm_data.get('settings', {}).get('houses', {})) + 1):
+        house_name = f"Kümes {i}"
+        house_settings = st.session_state.farm_data['settings']['houses'].get(house_name, {})
+        
+        # Ensure house_name exists in daily_data for current day
+        st.session_state.farm_data['daily_data'][f'day_{current_day}'].setdefault(house_name, {})
+
+        with st.expander(f"{house_name} Günlük Veri"):
+            current_daily_data = st.session_state.farm_data['daily_data'][f'day_{current_day}'][house_name]
+
+            with st.form(f"daily_data_form_{i}"):
+                deaths = st.number_input(
+                    f"{house_name} Ölüm Sayısı",
+                    min_value=0,
+                    value=current_daily_data.get('deaths', 0)
+                )
+                weight = st.number_input(
+                    f"{house_name} Ortalama Canlı Ağırlık (gram)",
+                    min_value=0.0,
+                    value=current_daily_data.get('weight', 0.0)
+                )
+                water_consumption = st.number_input(
+                    f"{house_name} Su Tüketimi (Litre)",
+                    min_value=0.0,
+                    value=current_daily_data.get('water_consumption', 0.0)
+                )
+                silo_remaining = st.number_input(
+                    f"{house_name} Siloda Kalan Yem (kg)",
+                    min_value=0.0,
+                    value=current_daily_data.get('silo_remaining', 0.0)
+                )
+
+                if st.form_submit_button(f"{house_name} Verilerini Kaydet"):
+                    st.session_state.farm_data['daily_data'][f'day_{current_day}'][house_name] = {
+                        'deaths': deaths,
+                        'weight': weight,
+                        'water_consumption': water_consumption,
+                        'silo_remaining': silo_remaining
+                    }
+                    save_json(st.session_state.farm_data, DATA_FILE)
+                    log_transaction(st.session_state.farm_data, "Daily Data Entry", f"{house_name} için {current_day}. gün verileri kaydedildi.")
+                    st.success(f"✅ {house_name} için {current_day}. gün verileri kaydedildi!")
+                    st.rerun()
+
+def page_drug_program():
+    st.title("💊 İlaç Programı")
+
+    current_day = get_current_day()
+    st.subheader(f"Bugün: {current_day}. Gün")
+
+    drug_info = get_drug_program_for_day(current_day)
+
+    if drug_info:
+        st.markdown("### Bugünün İlaç Programı")
+        st.write(f"**Stratejik Odak**: {drug_info.get('Stratejik Odak', 'N/A')}")
+        st.write(f"**Sabah İlacı**: {drug_info.get('Sabah İlacı', 'N/A')}")
+        st.write(f"**Akşam İlacı**: {drug_info.get('Akşam İlacı', 'N/A')}")
+        st.write(f"**Dozaj Notu**: {drug_info.get('Dozaj Notu', 'N/A')}")
+        st.write(f"**Veteriner Notu**: {drug_info.get('Veteriner Notu', 'N/A')}")
+    else:
+        st.info("Bugün için belirlenmiş bir ilaç programı bulunmamaktadır.")
+
+    st.markdown("---")
+    st.markdown("### Tüm 42 Günlük Program Özeti")
+    if st.session_state.drug_program:
+        df_drug = pd.DataFrame.from_dict(st.session_state.drug_program, orient='index')
+        df_drug.index.name = 'Gün'
+        st.dataframe(df_drug, use_container_width=True)
+    else:
+        st.warning("İlaç programı verisi yüklenemedi.")
+
+def page_feed_logistics():
+    current_day = get_current_day()
+    live_birds_per_house = {h: calculate_live_birds_per_house(h, current_day) for h in st.session_state.farm_data.get('settings', {}).get('houses', {}).keys()}
+    render_feed_logistics_page(st.session_state.farm_data, st.session_state.banvit_data, current_day, live_birds_per_house)
+
+def page_ai_assistant():
+    render_chat_page(st.session_state.farm_data, st.session_state.banvit_data, st.session_state.drug_program, get_current_day())
+
+def page_calculations():
+    st.title("🧮 Hesaplamalar")
+
+    current_day = get_current_day()
+    st.subheader(f"Bugün: {current_day}. Gün")
+
+    total_live_birds = calculate_total_live_birds(current_day)
+    avg_weight = calculate_average_weight(current_day)
+    fcr = calculate_fcr(current_day)
+    death_rate = calculate_death_rate(current_day)
+    feed_days_remaining = calculate_feed_days_remaining(current_day)
+    water_sabah, water_aksam = calculate_water_preparation(current_day)
+
+    st.metric("Toplam Canlı Hayvan", f"{total_live_birds:,}")
+    st.metric("Ortalama Canlı Ağırlık (gram)", f"{avg_weight:.2f}")
+    st.metric("FCR", f"{fcr:.2f}")
+    st.metric("Ölüm Oranı (%)", f"{death_rate:.2f}%")
+
+    st.subheader("Kümes Bazında Kalan Yem Günleri")
+    if feed_days_remaining:
+        for house, days in feed_days_remaining.items():
+            st.write(f"**{house}**: {days:.1f} gün")
+    else:
+        st.info("Yem günleri hesaplanamadı veya kümes verisi eksik.")
+
+    st.subheader("Su Hazırlama Önerisi (Sabah/Akşam)")
+    st.write(f"Sabah: {water_sabah:.0f} Litre")
+    st.write(f"Akşam: {water_aksam:.0f} Litre")
+
+def page_ai_knowledge_base():
+    st.title("🤖 AI Bilgi Bankası")
+    st.write("Bu bölümde, yüklenen belgeler ve gözlemler yapay zeka tarafından analiz edilerek size özel bilgiler sunulacaktır.")
+    # Placeholder for future functionality
+
+def page_drug_inventory():
+    st.title("💉 İlaç Envanteri")
+    st.write("Bu bölümde, mevcut ilaç envanteri takip edilecek ve ilaçların karıştırılabilirlik durumları görüntülenecektir.")
+    # Placeholder for future functionality
+
+def page_status_analysis():
+    st.title("📈 Durum Analizi")
+    st.write("Bu bölümde, çiftliğin genel durumu yapay zeka tarafından analiz edilerek kritik görevler ve teşhisler sunulacaktır.")
+    # Placeholder for future functionality
+
+def page_financial_analysis():
+    st.title("💰 Finansal Analiz")
+    st.write("Bu bölümde, çiftliğin finansal performansı detaylı olarak analiz edilecektir.")
+    # Placeholder for future functionality
 
 def page_settings():
-    st.title("⚙️ Çiftlik Ayarları")
+    st.title("⚙️ Ayarlar")
 
     st.subheader("Genel Ayarlar")
     with st.form("general_settings_form"):
-        farm_name = st.text_input("Çiftlik Adı", st.session_state.farm_data.get('settings', {}).get('farm_name', 'Yeni Çiftlik'))
-        start_date = st.date_input("Dönem Başlangıç Tarihi", value=datetime.strptime(st.session_state.farm_data.get('settings', {}).get('start_date', str(datetime.now().date())), '%Y-%m-%d').date())
-        target_slaughter_date = st.date_input("Hedef Kesim Tarihi", value=datetime.strptime(st.session_state.farm_data.get('settings', {}).get('target_slaughter_date', str((datetime.now() + timedelta(days=42)).date())), '%Y-%m-%d').date())
+        farm_name = st.text_input("Çiftlik Adı", value=st.session_state.farm_data.get('settings', {}).get('farm_name', 'Yeni Çiftlik'))
+        start_date = st.date_input("Başlangıç Tarihi", value=datetime.strptime(st.session_state.farm_data.get('settings', {}).get('start_date', datetime.now().strftime('%Y-%m-%d')), '%Y-%m-%d').date())
         
-        if st.form_submit_button("Ayarları Kaydet"):
-            st.session_state.farm_data['settings']['farm_name'] = farm_name
-            st.session_state.farm_data['settings']['start_date'] = str(start_date)
-            st.session_state.farm_data['settings']['target_slaughter_date'] = str(target_slaughter_date)
+        if st.form_submit_button("Genel Ayarları Kaydet"):
+            st.session_state.farm_data.setdefault('settings', {})['farm_name'] = farm_name
+            st.session_state.farm_data['settings']['start_date'] = start_date.strftime('%Y-%m-%d')
             save_json(st.session_state.farm_data, DATA_FILE)
+            log_transaction(st.session_state.farm_data, "General Settings Update", "Genel ayarlar güncellendi.")
             st.success("Genel ayarlar kaydedildi!")
             st.rerun()
 
     st.subheader("Kümes Ayarları")
     num_houses = st.number_input("Kümes Sayısı", min_value=1, max_value=6, value=len(st.session_state.farm_data.get('settings', {}).get('houses', {})) or 1)
 
+    # Ensure 'houses' key exists in settings
     if 'houses' not in st.session_state.farm_data['settings']:
         st.session_state.farm_data['settings']['houses'] = {}
 
     for i in range(num_houses):
         house_name = f"Kümes {i+1}"
-        current_house_settings = st.session_state.farm_data['settings']['houses'].get(house_name, {})
+        current_house_settings = st.session_state.farm_data['settings'].get('houses', {}).get(house_name, {})
         
         with st.expander(f"{house_name} Ayarları"):
             with st.form(f"house_settings_form_{i}"):
@@ -382,177 +470,48 @@ def page_settings():
                         'silo_capacity': silo_capacity
                     }
                     save_json(st.session_state.farm_data, DATA_FILE)
+                    log_transaction(st.session_state.farm_data, "House Settings Update", f"{house_name} ayarları güncellendi.")
                     st.success(f"✅ {house_name} ayarları kaydedildi!")
                     st.rerun()
 
-def page_daily_entry():
-    st.title("📝 Günlük Veri Girişi")
-    current_day = get_current_day()
-    st.write(f"**Bugün: {current_day}. Gün**")
+    st.subheader("Yem Geçiş Ayarları")
+    with st.form("feed_transition_settings_form"):
+        chick_to_grower = st.number_input("Civciv Yeminden Büyütme Yemine Geçiş Günü", min_value=1, max_value=42, value=st.session_state.farm_data.get('settings', {}).get('feed_transition', {}).get('chick_to_grower', 14))
+        grower_to_finisher = st.number_input("Büyütme Yeminden Bitirme Yemine Geçiş Günü", min_value=1, max_value=42, value=st.session_state.farm_data.get('settings', {}).get('grower_to_finisher', 28))
+        
+        if st.form_submit_button("Yem Geçiş Ayarlarını Kaydet"):
+            st.session_state.farm_data.setdefault('settings', {})['feed_transition'] = {
+                'chick_to_grower': chick_to_grower,
+                'grower_to_finisher': grower_to_finisher
+            }
+            save_json(st.session_state.farm_data, DATA_FILE)
+            log_transaction(st.session_state.farm_data, "Feed Transition Settings Update", "Yem geçiş ayarları güncellendi.")
+            st.success("✅ Yem geçiş ayarları kaydedildi!")
+            st.rerun()
 
-    if 'daily_data' not in st.session_state.farm_data:
-        st.session_state.farm_data['daily_data'] = {}
+    st.subheader("Diğer Ayarlar")
+    with st.form("other_settings_form"):
+        min_feed_days = st.number_input("Minimum Yem Kalma Günü (Sipariş Tetikleyici)", min_value=1, value=st.session_state.farm_data.get('settings', {}).get('min_feed_days', 2))
+        feed_stale_days = st.number_input("Yem Bayatlama Eşiği (Gün)", min_value=1, value=st.session_state.farm_data.get('settings', {}).get('feed_stale_days', 7))
 
-    day_key = f"day_{current_day}"
-    if day_key not in st.session_state.farm_data['daily_data']:
-        st.session_state.farm_data['daily_data'][day_key] = {}
-
-    for house_name in st.session_state.farm_data['settings']['houses'].keys():
-        with st.expander(f"{house_name} Günlük Veri"):
-            current_house_data = st.session_state.farm_data['daily_data'][day_key].get(house_name, {})
-            with st.form(f"daily_entry_form_{house_name}"):
-                deaths = st.number_input(f"{house_name} Ölüm Sayısı", min_value=0, value=current_house_data.get('deaths', 0))
-                weight = st.number_input(f"{house_name} Ortalama Canlı Ağırlık (gram)", min_value=0.0, value=current_house_data.get('weight', 0.0))
-                water_consumption = st.number_input(f"{house_name} Su Tüketimi (Litre)", min_value=0.0, value=current_house_data.get('water_consumption', 0.0))
-                silo_remaining = st.number_input(f"{house_name} Siloda Kalan Yem (kg)", min_value=0.0, value=current_house_data.get('silo_remaining', 0.0))
-
-                if st.form_submit_button(f"{house_name} Verilerini Kaydet"):
-                    st.session_state.farm_data['daily_data'][day_key][house_name] = {
-                        'deaths': deaths,
-                        'weight': weight,
-                        'water_consumption': water_consumption,
-                        'silo_remaining': silo_remaining
-                    }
-                    log_transaction(st.session_state.farm_data, "DAILY_DATA_ENTRY", {"day": current_day, "house": house_name})
-                    save_json(st.session_state.farm_data, DATA_FILE)
-                    st.success(f"✅ {house_name} günlük verileri kaydedildi!")
-                    st.rerun()
-
-def page_drug_program():
-    st.title("💊 İlaç Programı")
-    current_day = get_current_day()
-    st.write(f"**Bugün: {current_day}. Gün**")
-
-    drug_program = st.session_state.drug_program.get('drug_program_complete', {})
-
-    if not drug_program:
-        st.warning("İlaç programı yüklenemedi veya boş. Lütfen `complete_drug_program.json` dosyasını kontrol edin.")
-        return
-
-    st.subheader("🗓️ Bugünün İlaç Programı")
-    today_program = drug_program.get(str(current_day), {})
-    if today_program:
-        st.markdown(f"**Stratejik Odak**: {today_program.get('strategic_focus', 'N/A')}")
-        st.markdown(f"**Sabah İlaçı**: {today_program.get('sabah', 'Yok')}")
-        st.markdown(f"**Akşam İlaçı**: {today_program.get('aksam', 'Yok')}")
-        st.markdown(f"**Dozaj Notu**: {today_program.get('dozaj_notu', 'N/A')}")
-        st.markdown(f"**Veteriner Notu**: {today_program.get('veteriner_notu', 'N/A')}")
-    else:
-        st.info("Bugün için tanımlanmış bir ilaç programı bulunmamaktadır.")
-
-    st.markdown("---")
-
-    # Display all 42 days program
-    st.subheader("📋 Tüm 42 Günlük Program Özeti")
-    
-    program_data = []
-    for day in range(1, 43):
-        day_str = str(day)
-        program_day_data = drug_program.get(day_str, {})
-        program_data.append({
-            "Gün": day,
-            "Yaş": program_day_data.get('age', ''),
-            "Stratejik Odak": program_day_data.get('strategic_focus', ''),
-            "Sabah İlaçı": program_day_data.get('sabah', ''),
-            "Akşam İlaçı": program_day_data.get('aksam', ''),
-            "Dozaj Notu": program_day_data.get('dozaj_notu', ''),
-            "Veteriner Notu": program_day_data.get('veteriner_notu', '')
-        })
-    
-    df_program = pd.DataFrame(program_data)
-    st.dataframe(df_program, use_container_width=True)
-
-def page_feed_logistics():
-    """Yem Lojistiği Sayfası"""
-    current_day = get_current_day()
-    live_birds_per_house = {house_name: calculate_live_birds_per_house(house_name, current_day) for house_name in st.session_state.farm_data['settings']['houses'].keys()}
-    render_feed_logistics_page(st.session_state.farm_data, st.session_state.banvit_data, current_day, live_birds_per_house)
-
-def page_chat():
-    """AI Asistan Sayfası"""
-    current_day = get_current_day()
-    total_live = calculate_total_live_birds(current_day)
-    death_rate = calculate_death_rate(current_day)
-    avg_weight = calculate_average_weight(current_day)
-    fcr = calculate_fcr(current_day)
-    health_score = calculate_health_score(current_day)
-
-    calculations = {
-        'total_live': total_live,
-        'death_rate': death_rate,
-        'avg_weight': avg_weight,
-        'fcr': fcr,
-        'health_score': health_score,
-        'feed_days': calculate_feed_days_remaining(current_day),
-        'morning_water': calculate_water_preparation(current_day)[0],
-        'evening_water': calculate_water_preparation(current_day)[1]
-    }
-    render_chat_page(st.session_state.farm_data, st.session_state.banvit_data, current_day, calculations)
-
-def page_calculations():
-    st.title("🧮 Hesaplamalar")
-    current_day = get_current_day()
-    st.write(f"**Bugün: {current_day}. Gün**")
-
-    st.subheader("Canlı Hayvan Sayısı")
-    for house_name in st.session_state.farm_data['settings']['houses'].keys():
-        live_birds = calculate_live_birds_per_house(house_name, current_day)
-        st.write(f"- {house_name}: {live_birds:,} adet")
-    st.write(f"**Toplam Canlı Hayvan**: {calculate_total_live_birds(current_day):,} adet")
-
-    st.subheader("Ölüm Oranı")
-    death_rate = calculate_death_rate(current_day)
-    st.write(f"- Çiftlik Ölüm Oranı: %{death_rate:.2f}")
-
-    st.subheader("Ortalama Ağırlık")
-    avg_weight = calculate_average_weight(current_day)
-    st.write(f"- Çiftlik Ortalama Ağırlık: {avg_weight:.0f} gram")
-
-    st.subheader("FCR (Yem Dönüşüm Oranı)")
-    fcr = calculate_fcr(current_day)
-    st.write(f"- Çiftlik FCR: {fcr:.2f}")
-
-    st.subheader("Sağlık Puanı")
-    health_score = calculate_health_score(current_day)
-    st.write(f"- Çiftlik Sağlık Puanı: {health_score:.1f}/100")
-
-def page_ai_knowledge_base():
-    st.title("🤖 AI Bilgi Bankası")
-    st.info("Burada çiftliğe özel dokümanları yükleyebilir ve AI'ın analiz etmesini sağlayabilirsiniz.")
-    st.warning("Bu özellik henüz geliştirme aşamasındadır.")
-
-def page_drug_inventory():
-    st.title("💉 İlaç Envanteri")
-    st.info("Burada ilaç envanterinizi takip edebilir ve karıştırılabilirlik matrisini görüntüleyebilirsiniz.")
-    st.warning("Bu özellik henüz geliştirme aşamasındadır.")
-
-def page_status_analysis():
-    st.title("📈 Durum Analizi")
-    st.info("Burada AI tarafından yapılan detaylı durum analizlerini ve kritik görevleri görebilirsiniz.")
-    st.warning("Bu özellik henüz geliştirme aşamasındadır.")
-
-def page_financial_analysis():
-    st.title("💰 Finansal Analiz")
-    st.info("Burada çiftliğinizin finansal performansını takip edebilirsiniz.")
-    st.warning("Bu özellik henüz geliştirme aşamasındadır.")
+        if st.form_submit_button("Diğer Ayarları Kaydet"):
+            st.session_state.farm_data.setdefault('settings', {})['min_feed_days'] = min_feed_days
+            st.session_state.farm_data.setdefault('settings', {})['feed_stale_days'] = feed_stale_days
+            save_json(st.session_state.farm_data, DATA_FILE)
+            log_transaction(st.session_state.farm_data, "Other Settings Update", "Diğer ayarlar güncellendi.")
+            st.success("✅ Diğer ayarlar kaydedildi!")
+            st.rerun()
 
 # ============ MAIN APP LOGIC ============
 def main():
     st.sidebar.title("Murat Özkan Kümes IS")
-    st.sidebar.markdown("--- ")
     
-    # Check if settings are complete
-    if not st.session_state.farm_data.get('settings', {}).get('farm_name') or not st.session_state.farm_data.get('settings', {}).get('houses'):
-        st.warning("Lütfen önce Ayarlar sayfasından çiftlik ve kümes bilgilerinizi girin.")
-        page_settings()
-        return
-
     pages = {
-        "📊 Dashboard": page_dashboard,
-        "📝 Günlük Veri Girişi": page_daily_entry,
+        "🏠 Dashboard": page_dashboard,
+        "📊 Günlük Veri Girişi": page_daily_entry,
         "💊 İlaç Programı": page_drug_program,
-        "🚛 Yem Lojistiği": page_feed_logistics,
-        "💬 AI Asistan": page_chat,
+        "🚚 Yem Lojistiği": page_feed_logistics,
+        "💬 AI Asistan": page_ai_assistant,
         "🧮 Hesaplamalar": page_calculations,
         "🤖 AI Bilgi Bankası": page_ai_knowledge_base,
         "💉 İlaç Envanteri": page_drug_inventory,
@@ -561,8 +520,7 @@ def main():
         "⚙️ Ayarlar": page_settings,
     }
 
-    selection = st.sidebar.radio("Sayfa Seçimi", list(pages.keys()))
-    
+    selection = st.sidebar.radio("Gezinme", list(pages.keys()))
     page = pages[selection]
     page()
 

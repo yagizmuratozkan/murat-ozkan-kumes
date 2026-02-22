@@ -1,6 +1,3 @@
-# Dashboard and Analytics Module
-# Comprehensive KPI tracking, performance visualization, and trend analysis
-
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
@@ -12,11 +9,15 @@ from typing import Dict
 class DashboardAnalytics:
     """Advanced dashboard and analytics system"""
     
-    def __init__(self, farm_data, banvit_data, current_day):
+    def __init__(self, farm_data, banvit_data, current_day, total_live_birds, avg_weight, fcr, death_rate):
         self.farm_data = farm_data
         self.banvit_data = banvit_data
         self.current_day = current_day
-        self.settings = farm_data['settings']
+        self.settings = farm_data["settings"]
+        self.total_live_birds = total_live_birds
+        self.avg_weight = avg_weight
+        self.fcr = fcr
+        self.death_rate = death_rate
     
     def get_historical_data(self) -> pd.DataFrame:
         """Extract historical daily data"""
@@ -310,158 +311,74 @@ class DashboardAnalytics:
             title='💀 Günlük Ölüm Oranı',
             xaxis_title='Gün',
             yaxis_title='Ölüm Oranı (%)',
-            template='plotly_white',
-            showlegend=False
+            hovermode='x unified',
+            template='plotly_white'
         )
         
         return fig
-    
-    def create_performance_summary(self) -> pd.DataFrame:
-        """Create performance summary table"""
-        df = self.get_historical_data()
-        
-        if df.empty:
-            return pd.DataFrame()
-        
-        summary = pd.DataFrame({
-            'Metrik': [
-                'Canlı Hayvan Sayısı',
-                'Toplam Ölüm',
-                'Kümülatif Ölüm Oranı',
-                'Ortalama Ağırlık',
-                'Ross Hedefi',
-                'Ağırlık Sapması',
-                'FCR',
-                'Ross FCR Hedefi',
-                'FCR Sapması',
-                'Sağlık Puanı'
-            ],
-            'Değer': [
-                f"{df.iloc[-1]['live_birds']:,.0f}",
-                f"{df['deaths'].sum():,.0f}",
-                f"%{df.iloc[-1]['death_rate']:.2f}",
-                f"{df.iloc[-1]['avg_weight']:.0f}g",
-                f"{df.iloc[-1]['ross_weight']:.0f}g",
-                f"{df.iloc[-1]['weight_deviation']:.1f}%",
-                f"{df.iloc[-1]['fcr']:.2f}",
-                f"{df.iloc[-1]['ross_fcr']:.2f}",
-                f"{df.iloc[-1]['fcr_deviation']:.2f}",
-                f"{self._calculate_health_score(df):.1f}/100"
-            ]
-        })
-        
-        return summary
 
+def render_dashboard(farm_data, banvit_data, current_day, total_live_birds, avg_weight, fcr, death_rate):
+    st.title("🏠 Dashboard")
 
-def render_dashboard(farm_data, banvit_data, current_day):
-    """Render the main dashboard"""
-    
-    st.set_page_config(page_title="Çiftlik Dashboard", layout="wide")
-    
-    analytics = DashboardAnalytics(farm_data, banvit_data, current_day)
-    
-    # Get KPIs
-    kpis = analytics.calculate_kpis()
-    
+    # Initialize DashboardAnalytics with all necessary data
+    dashboard_analyzer = DashboardAnalytics(farm_data, banvit_data, current_day, total_live_birds, avg_weight, fcr, death_rate)
+    kpis = dashboard_analyzer.calculate_kpis()
+
     if not kpis:
-        st.warning("Henüz veri yok. Lütfen günlük verileri girin.")
+        st.warning("Dashboard verileri yüklenemedi. Lütfen ayarları kontrol edin ve günlük veri girin.")
         return
-    
-    # Header
-    st.title("📊 Çiftlik Dashboard")
-    st.subheader(f"Gün {kpis['current_day']}/42 - {kpis['performance_grade']}")
-    
-    st.markdown("---")
-    
-    # KPI Cards
+
+    st.subheader("Genel Durum")
     col1, col2, col3, col4, col5 = st.columns(5)
-    
+
     with col1:
-        st.metric(
-            "Canlı Hayvan",
-            f"{kpis['live_birds']:,}",
-            f"{-kpis['cumulative_deaths']:,} ölüm"
-        )
-    
+        st.metric("Canlı Hayvan", f"{kpis.get('live_birds', 0):,}")
     with col2:
-        st.metric(
-            "Ölüm Oranı",
-            f"%{kpis['cumulative_death_rate']:.2f}",
-            delta=f"Hedef: <1%"
-        )
-    
+        st.metric("Ortalama Ağırlık", f"{kpis.get('avg_weight', 0):.2f} g")
     with col3:
-        weight_delta = f"{kpis['weight_trend']:+.0f}g" if kpis['weight_trend'] != 0 else "Sabit"
-        st.metric(
-            "Ağırlık",
-            f"{kpis['avg_weight']:.0f}g",
-            delta=weight_delta,
-            delta_color="off"
-        )
-    
+        st.metric("FCR", f"{kpis.get('fcr', 0):.2f}")
     with col4:
-        fcr_delta = f"{kpis['fcr_trend']:+.2f}" if kpis['fcr_trend'] != 0 else "Sabit"
-        st.metric(
-            "FCR",
-            f"{kpis['fcr']:.2f}",
-            delta=fcr_delta,
-            delta_color="inverse"
-        )
-    
+        st.metric("Ölüm Oranı", f"{kpis.get('cumulative_death_rate', 0):.2f}%")
     with col5:
-        st.metric(
-            "Sağlık Puanı",
-            f"{kpis['health_score']:.1f}/100",
-            delta=f"Hedef: >90"
-        )
+        st.metric("Sağlık Puanı", f"{kpis.get('health_score', 0):.0f}", help=kpis.get('performance_grade', ''))
+
+    st.markdown("### Performans Analizi")
+    col6, col7 = st.columns(2)
+    with col6:
+        st.plotly_chart(dashboard_analyzer.create_weight_chart(), use_container_width=True)
+    with col7:
+        st.plotly_chart(dashboard_analyzer.create_fcr_chart(), use_container_width=True)
     
-    st.markdown("---")
-    
-    # Charts
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.plotly_chart(analytics.create_weight_chart(), use_container_width=True)
-    
-    with col2:
-        st.plotly_chart(analytics.create_fcr_chart(), use_container_width=True)
-    
-    st.plotly_chart(analytics.create_mortality_chart(), use_container_width=True)
-    
-    st.markdown("---")
-    
-    # Performance Summary
-    st.subheader("📋 Performans Özeti")
-    summary_df = analytics.create_performance_summary()
-    st.dataframe(summary_df, use_container_width=True, hide_index=True)
-    
-    st.markdown("---")
-    
-    # Alerts and Recommendations
-    st.subheader("⚠️ Uyarılar ve Öneriler")
-    
-    alerts = []
-    
-    if kpis['cumulative_death_rate'] > 2:
-        alerts.append(("🔴", "KRİTİK", f"Ölüm oranı %{kpis['cumulative_death_rate']:.2f} - Acil veteriner müdahalesi gerekli!"))
-    elif kpis['cumulative_death_rate'] > 1:
-        alerts.append(("🟡", "UYARI", f"Ölüm oranı %{kpis['cumulative_death_rate']:.2f} - Tedavi başla"))
-    
-    if abs(kpis['weight_vs_target']) > 15:
-        alerts.append(("🔴", "KRİTİK", f"Ağırlık hedeften %{kpis['weight_vs_target']:.1f} sapma"))
-    elif abs(kpis['weight_vs_target']) > 10:
-        alerts.append(("🟡", "UYARI", f"Ağırlık hedeften %{kpis['weight_vs_target']:.1f} sapma"))
-    
-    if kpis['fcr_vs_target'] > 0.15:
-        alerts.append(("🔴", "KRİTİK", f"FCR hedeften +{kpis['fcr_vs_target']:.2f} sapma"))
-    elif kpis['fcr_vs_target'] > 0.05:
-        alerts.append(("🟡", "UYARI", f"FCR hedeften +{kpis['fcr_vs_target']:.2f} sapma"))
-    
-    if not alerts:
-        st.success("✅ Tüm parametreler normal!")
-    else:
-        for icon, level, message in alerts:
-            if level == "KRİTİK":
-                st.error(f"{icon} {level}: {message}")
-            else:
-                st.warning(f"{icon} {level}: {message}")
+    st.plotly_chart(dashboard_analyzer.create_mortality_chart(), use_container_width=True)
+
+    st.markdown("### Uyarılar ve Öneriler")
+    # Example alerts based on KPIs
+    if kpis.get('cumulative_death_rate', 0) > 2:
+        st.markdown("<div class='alert-red'>🔴 KRİTİK UYARI: Ölüm oranı %2'nin üzerinde! Acil müdahale gerekebilir.</div>", unsafe_allow_html=True)
+    elif kpis.get('cumulative_death_rate', 0) > 1:
+        st.markdown("<div class='alert-yellow'>🟡 UYARI: Ölüm oranı %1'in üzerinde. Durumu yakından takip edin.</div>", unsafe_allow_html=True)
+
+    if kpis.get('weight_vs_target', 0) < -10:
+        st.markdown("<div class='alert-red'>🔴 KRİTİK UYARI: Ortalama ağırlık hedef ağırlığın %10 altında! Yem alımını ve sağlık durumunu kontrol edin.</div>", unsafe_allow_html=True)
+    elif kpis.get('weight_vs_target', 0) < -5:
+        st.markdown("<div class='alert-yellow'>🟡 UYARI: Ortalama ağırlık hedef ağırlığın %5 altında. Büyüme performansını izleyin.</div>", unsafe_allow_html=True)
+
+    if kpis.get('fcr_vs_target', 0) > 0.1:
+        st.markdown("<div class='alert-red'>🔴 KRİTİK UYARI: FCR hedef değerden %0.1'den fazla yüksek! Yem kalitesini veya sindirim sorunlarını değerlendirin.</div>", unsafe_allow_html=True)
+    elif kpis.get('fcr_vs_target', 0) > 0.05:
+        st.markdown("<div class='alert-yellow'>🟡 UYARI: FCR hedef değerden %0.05'den fazla yüksek. Yem yönetimini gözden geçirin.</div>", unsafe_allow_html=True)
+
+    if kpis.get('health_score', 0) < 60:
+        st.markdown("<div class='alert-red'>🔴 KRİTİK UYARI: Sağlık puanı düşük! Kapsamlı bir inceleme yapılması önerilir.</div>", unsafe_allow_html=True)
+    elif kpis.get('health_score', 0) < 70:
+        st.markdown("<div class='alert-yellow'>🟡 UYARI: Sağlık puanı orta seviyede. Performansı artırmak için önlemler alın.</div>", unsafe_allow_html=True)
+
+    st.markdown("<div class='alert-green'>✅ Her şey yolunda görünüyor.</div>", unsafe_allow_html=True)
+
+    st.markdown("### Kritik Görevler")
+    st.write("- Veteriner hekimle görüşme planla.")
+    st.write("- Yem stoklarını kontrol et.")
+    st.write("- Su kalitesi analizini tekrarla.")
+
+    st.markdown("### AI Teşhis ve Öneriler")
+    st.info("AI asistanınızdan daha detaylı teşhis ve öneriler almak için 'AI Asistan' sayfasına gidin.")
